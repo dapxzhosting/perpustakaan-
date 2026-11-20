@@ -56,10 +56,15 @@ class AuthController extends Controller
         $bukuId = $credentials['buku_id'] ?? null;
         unset($credentials['buku_id']);
 
-        $throttleKey = Str::lower($credentials['email']).'|'.$request->ip();
+        $email = Str::lower($credentials['email']);
+        // Kunci per email+IP, dan kunci per email saja sebagai cadangan:
+        // dengan trustProxies('*') header X-Forwarded-For bisa dipalsukan,
+        // sehingga batas berbasis IP saja bisa dihindari.
+        $throttleKey = $email.'|'.$request->ip();
+        $emailKey = 'login-email|'.$email;
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $detik = RateLimiter::availableIn($throttleKey);
+        if (RateLimiter::tooManyAttempts($throttleKey, 5) || RateLimiter::tooManyAttempts($emailKey, 20)) {
+            $detik = max(RateLimiter::availableIn($throttleKey), RateLimiter::availableIn($emailKey));
 
             return back()
                 ->withErrors(['email' => "Terlalu banyak percobaan masuk. Coba lagi dalam {$detik} detik."])
@@ -68,6 +73,7 @@ class AuthController extends Controller
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::hit($throttleKey, 60);
+            RateLimiter::hit($emailKey, 300);
 
             return back()
                 ->withErrors(['email' => 'Email atau kata sandi salah.'])
@@ -75,6 +81,7 @@ class AuthController extends Controller
         }
 
         RateLimiter::clear($throttleKey);
+        RateLimiter::clear($emailKey);
         $request->session()->regenerate();
 
         if (Auth::user()->role === 'petugas') {

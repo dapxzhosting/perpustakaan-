@@ -12,6 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Middleware\TrustProxies;
 use Tests\TestCase;
 
 class PerpustakaanTest extends TestCase
@@ -74,6 +75,9 @@ class PerpustakaanTest extends TestCase
 
     public function test_public_assets_use_https_when_behind_a_trusted_proxy(): void
     {
+        // Framework mereset setelan proxy saat tes; set ulang sama seperti di bootstrap/app.php.
+        TrustProxies::at('*');
+
         $this->withServerVariables([
             'HTTP_X_FORWARDED_HOST' => 'perpustakaan.example.test',
             'HTTP_X_FORWARDED_PROTO' => 'https',

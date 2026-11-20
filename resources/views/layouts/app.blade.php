@@ -16,8 +16,10 @@
         @include('partials.flash')
         @yield('konten')
     </main>
-    <footer class="site-footer">
+    @php $footerRingkas = auth()->check() && auth()->user()->role === 'petugas'; @endphp
+    <footer class="site-footer {{ $footerRingkas ? 'site-footer-compact' : '' }}">
         <div class="container page-wrap">
+            @unless ($footerRingkas)
             <div class="footer-main">
                 <div class="footer-about">
                     <a class="brand-lockup footer-brand" href="{{ route('katalog') }}">
@@ -52,6 +54,7 @@
                     <a href="{{ route('katalog') }}">Lihat katalog <span aria-hidden="true">↗</span></a>
                 </div>
             </div>
+            @endunless
             <div class="footer-bottom">
                 <span>© {{ now()->year }} Ruang Baca. Ruang untuk tumbuh bersama.</span>
                 <a href="{{ route('katalog') }}">Kembali ke katalog <span aria-hidden="true">↑</span></a>

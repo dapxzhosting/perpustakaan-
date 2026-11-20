@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table align-middle">
+            <table class="table align-middle table-stack">
                 <thead>
                     <tr>
                         <th>Buku</th>
@@ -33,14 +33,16 @@
                 <tbody>
                     @forelse ($peminjaman as $item)
                         <tr>
-                            <td>
-                                <a class="member-loan-title" href="{{ route('buku.show', $item->buku) }}">{{ $item->buku->judul }}</a>
-                                <small class="d-block text-secondary">{{ $item->buku->kode_buku }}</small>
+                            <td data-label="Buku">
+                                <div class="cell-main">
+                                    <a class="member-loan-title" href="{{ route('buku.show', $item->buku) }}">{{ $item->buku->judul }}</a>
+                                    <small class="d-block text-secondary">{{ $item->buku->kode_buku }}</small>
+                                </div>
                             </td>
-                            <td>{{ $item->tgl_pinjam->format('d M Y') }}</td>
-                            <td>{{ $item->tgl_jatuh_tempo->format('d M Y') }}</td>
-                            <td>{{ $item->tgl_kembali?->format('d M Y') ?? 'Belum dikembalikan' }}</td>
-                            <td>
+                            <td data-label="Tanggal pinjam">{{ $item->tgl_pinjam->format('d M Y') }}</td>
+                            <td data-label="Jatuh tempo">{{ $item->tgl_jatuh_tempo->format('d M Y') }}</td>
+                            <td data-label="Tanggal kembali">{{ $item->tgl_kembali?->format('d M Y') ?? 'Belum dikembalikan' }}</td>
+                            <td data-label="Status">
                                 @if ($item->status === 'dikembalikan')
                                     <span class="badge text-bg-success">Dikembalikan</span>
                                 @elseif ($item->tgl_jatuh_tempo->lt(today()))
@@ -49,7 +51,7 @@
                                     <span class="badge text-bg-warning">Dipinjam</span>
                                 @endif
                             </td>
-                            <td>Rp{{ number_format($item->dendaSaatIni(), 0, ',', '.') }}</td>
+                            <td data-label="Denda">Rp{{ number_format($item->dendaSaatIni(), 0, ',', '.') }}</td>
                         </tr>
                     @empty
                         <tr>

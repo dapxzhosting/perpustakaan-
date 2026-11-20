@@ -58,7 +58,10 @@
             </div>
         </div>
     </div>
-    <button class="btn btn-primary mt-4">Simpan buku</button>
+    <div class="form-actions">
+        <button class="button button-primary" type="submit">Simpan buku</button>
+        <a class="button button-quiet" href="{{ route('admin.buku.index') }}">Batal</a>
+    </div>
 </form>
 
 @push('scripts')

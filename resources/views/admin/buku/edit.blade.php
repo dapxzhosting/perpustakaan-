@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('judul', 'Ubah Buku')
 @section('konten')
-    <div class="page-heading"><h1>Ubah data buku</h1><a class="btn btn-outline-secondary" href="{{ route('admin.buku.index') }}">Kembali</a></div>
-    <div class="card p-4">@include('admin.buku._form', ['route' => route('admin.buku.update', $buku), 'method' => 'PUT'])</div>
+    <div class="page-heading">
+        <div><p class="section-kicker">DATA MASTER</p><h1>Ubah data buku</h1></div>
+        <a class="button button-quiet" href="{{ route('admin.buku.index') }}"><span aria-hidden="true">←</span> Kembali</a>
+    </div>
+    <div class="panel-card form-card">@include('admin.buku._form', ['route' => route('admin.buku.update', $buku), 'method' => 'PUT'])</div>
 @endsection

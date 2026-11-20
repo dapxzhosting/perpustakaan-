@@ -31,5 +31,8 @@
             @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
     </div>
-    <button class="btn btn-primary mt-4">Simpan anggota</button>
+    <div class="form-actions">
+        <button class="button button-primary" type="submit">Simpan anggota</button>
+        <a class="button button-quiet" href="{{ route('admin.anggota.index') }}">Batal</a>
+    </div>
 </form>

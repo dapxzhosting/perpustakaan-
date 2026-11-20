@@ -594,3 +594,69 @@ a { color: inherit; }
     .book-metadata { grid-template-columns: 1fr; }
     .catalog-section { padding-top: 28px; }
 }
+
+/* ==========================================================
+   Perapian layout (konsistensi halaman admin, tabel mobile, form)
+   ========================================================== */
+
+/* Label kecil di atas judul: sebelumnya .eyebrow tidak punya gaya */
+.eyebrow { margin: 0 0 10px; color: var(--brand); font-size: .68rem; font-weight: 850; letter-spacing: .14em; }
+
+/* Beranda: hero sejajar dengan konten di bawahnya */
+.home-hero { padding-right: 0; padding-left: 0; }
+
+/* Judul halaman admin */
+.page-heading { margin: 4px 0 24px; }
+.page-heading > div > .section-kicker { margin-bottom: 8px; }
+
+/* Tombol Bootstrap disamakan dengan tombol .button */
+.btn { border-radius: 11px; font-weight: 700; transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn-sm { padding: .32rem .75rem; border-radius: 9px; font-size: .8rem; }
+.btn-primary { box-shadow: 0 8px 18px rgb(35 107 81 / 16%); }
+.btn-outline-primary { background: #fff; }
+
+/* Form: lebar nyaman dibaca + area tombol rapi */
+.page-heading:has(+ .form-card) { max-width: 920px; }
+.form-card { max-width: 920px; padding: clamp(20px, 4vw, 34px); }
+.form-card .form-label { margin-bottom: 8px; }
+.form-card .form-text { margin-top: 7px; color: var(--muted); font-size: .8rem; }
+.form-card .invalid-feedback { font-size: .8rem; }
+.form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
+
+/* Tabel admin */
+.panel-card .table-responsive { margin: 0 -6px; }
+.table tbody tr:hover > * { background-color: #f8faf5; }
+.pagination { flex-wrap: wrap; }
+.panel-card nav .d-sm-flex { gap: 12px; }
+.panel-card nav p.small { margin: 0; color: var(--muted); }
+
+/* Footer ringkas untuk petugas (tanpa blok promosi anggota) */
+.site-footer-compact { margin-top: 48px; }
+.site-footer-compact .footer-bottom { border-top: 0; }
+
+/* Mobile: tabel berubah jadi kartu agar semua kolom dan tombol aksi terlihat */
+@media (max-width: 767.98px) {
+    .page-heading .button, .page-heading .btn { width: 100%; }
+
+    .table-stack, .loans-panel .table.table-stack, .member-loans .table.table-stack { min-width: 0; }
+    .table-stack thead { display: none; }
+    .table-stack, .table-stack tbody, .table-stack tr, .table-stack td { display: block; width: 100%; }
+    .table-stack tbody tr { margin-bottom: 12px; padding: 6px 14px; border: 1px solid #e9ebe3; border-radius: 15px; background: #fff; }
+    .table-stack tbody tr:last-child { margin-bottom: 0; }
+    .table-stack.table > :not(caption) > * > * { padding: 10px 0; }
+    .table-stack tbody td { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px dashed #eceee6; text-align: right; }
+    .table-stack tbody td:last-child { border-bottom: 0; }
+    .table-stack tbody td::before { content: attr(data-label); flex: 0 0 auto; color: #8b978d; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+    .table-stack tbody td[colspan]::before, .table-stack tbody td.cell-actions::before { display: none; }
+    .table-stack tbody td[colspan] { display: block; text-align: center; }
+    .table-stack tbody td.cell-actions { flex-wrap: wrap; justify-content: flex-start; gap: 8px; }
+    .table-stack tbody td.cell-actions form { margin: 0; }
+    .table-stack .cell-main { min-width: 0; text-align: right; }
+    .table-stack .loan-actions-cell form { width: 100%; }
+    .table-stack td .btn, .table-stack td form .btn { min-height: 38px; }
+    .loans-panel .table-responsive, .member-loans .table-responsive, .panel-card .table-responsive { margin: 0; overflow: visible; }
+    .table-stack tbody td.cell-cover:not(:has(img)) { display: none; }
+    .form-actions .button { flex: 1 1 140px; }
+    .panel-card nav .d-sm-flex { align-items: center; }
+}

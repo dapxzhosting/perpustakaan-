@@ -64,7 +64,7 @@
         </form>
 
         <div class="table-responsive">
-            <table class="table align-middle loan-table">
+            <table class="table align-middle loan-table table-stack">
                 <thead>
                     <tr>
                         <th>Anggota</th>
@@ -82,17 +82,21 @@
                             $terlambat = $item->status === 'dipinjam' && $item->tgl_jatuh_tempo->lt(today());
                         @endphp
                         <tr>
-                            <td>
-                                <strong>{{ $item->anggota->nama }}</strong>
-                                <small class="d-block text-secondary">{{ $item->anggota->nis }} · {{ $item->anggota->kelas }}</small>
+                            <td data-label="Anggota">
+                                <div class="cell-main">
+                                    <strong>{{ $item->anggota->nama }}</strong>
+                                    <small class="d-block text-secondary">{{ $item->anggota->nis }} · {{ $item->anggota->kelas }}</small>
+                                </div>
                             </td>
-                            <td>
-                                <strong>{{ $item->buku->judul }}</strong>
-                                <small class="d-block text-secondary">{{ $item->buku->kode_buku }}</small>
+                            <td data-label="Buku">
+                                <div class="cell-main">
+                                    <strong>{{ $item->buku->judul }}</strong>
+                                    <small class="d-block text-secondary">{{ $item->buku->kode_buku }}</small>
+                                </div>
                             </td>
-                            <td>{{ $item->tgl_pinjam->format('d M Y') }}</td>
-                            <td>{{ $item->tgl_jatuh_tempo->format('d M Y') }}</td>
-                            <td>
+                            <td data-label="Tanggal pinjam">{{ $item->tgl_pinjam->format('d M Y') }}</td>
+                            <td data-label="Jatuh tempo">{{ $item->tgl_jatuh_tempo->format('d M Y') }}</td>
+                            <td data-label="Status">
                                 @if ($item->status === 'dikembalikan')
                                     <span class="badge text-bg-success">Dikembalikan</span>
                                 @elseif ($terlambat)
@@ -101,8 +105,8 @@
                                     <span class="badge text-bg-warning">Dipinjam</span>
                                 @endif
                             </td>
-                            <td>Rp{{ number_format($item->dendaSaatIni(), 0, ',', '.') }}</td>
-                            <td class="text-end text-nowrap">
+                            <td data-label="Denda">Rp{{ number_format($item->dendaSaatIni(), 0, ',', '.') }}</td>
+                            <td class="text-end text-nowrap cell-actions">
                                 @if ($item->status === 'dipinjam')
                                     <form action="{{ route('admin.peminjaman.kembalikan', $item) }}" method="POST" onsubmit="return confirm('Catat pengembalian buku ini?')">
                                         @csrf
@@ -110,7 +114,7 @@
                                         <button class="btn btn-sm btn-outline-success" type="submit">Kembalikan</button>
                                     </form>
                                 @else
-                                    <span class="text-secondary small">{{ $item->tgl_kembali?->format('d M Y') ?? '-' }}</span>
+                                    <span class="text-secondary small"><span class="d-md-none">Dikembalikan </span>{{ $item->tgl_kembali?->format('d M Y') ?? '-' }}</span>
                                 @endif
                             </td>
                         </tr>
