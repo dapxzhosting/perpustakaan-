@@ -21,6 +21,13 @@ class UserFactory extends Factory
         ];
     }
 
+    public function petugas(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'petugas',
+        ]);
+    }
+
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

@@ -28,6 +28,24 @@ class Peminjaman extends Model
         ];
     }
 
+    public const DENDA_PER_HARI = 1000;
+
+    public function hariTerlambat(?\Carbon\CarbonInterface $sampai = null): int
+    {
+        $sampai ??= $this->tgl_kembali ?? today();
+
+        return max(0, (int) $this->tgl_jatuh_tempo->diffInDays($sampai, false));
+    }
+
+    public function dendaSaatIni(): int
+    {
+        if ($this->status === 'dikembalikan') {
+            return (int) $this->denda;
+        }
+
+        return $this->hariTerlambat(today()) * self::DENDA_PER_HARI;
+    }
+
     public function anggota(): BelongsTo
     {
         return $this->belongsTo(Anggota::class);

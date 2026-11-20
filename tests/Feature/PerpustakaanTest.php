@@ -42,7 +42,7 @@ class PerpustakaanTest extends TestCase
             ->assertDontSee('✳')
             ->assertDontSee('✦');
 
-        $user = User::factory()->create([
+        $user = User::factory()->petugas()->create([
             'email' => 'petugas@sekolah.test',
             'password' => 'password',
         ]);
@@ -70,6 +70,17 @@ class PerpustakaanTest extends TestCase
             ->assertDontSee('✦')
             ->assertDontSee('Pertemuan 1')
             ->assertDontSee('Pertemuan 2');
+    }
+
+    public function test_public_assets_use_https_when_behind_a_trusted_proxy(): void
+    {
+        $this->withServerVariables([
+            'HTTP_X_FORWARDED_HOST' => 'perpustakaan.example.test',
+            'HTTP_X_FORWARDED_PROTO' => 'https',
+            'HTTP_X_FORWARDED_PORT' => '443',
+        ])->get(route('katalog'))
+            ->assertOk()
+            ->assertSee('https://perpustakaan.example.test/css/app.css', false);
     }
 
     public function test_login_errors_keep_email_and_report_invalid_credentials_in_indonesian(): void
@@ -186,7 +197,7 @@ class PerpustakaanTest extends TestCase
     public function test_petugas_can_manage_kategori_buku_and_anggota(): void
     {
         Storage::fake('public');
-        $user = User::factory()->create();
+        $user = User::factory()->petugas()->create();
         $this->assertSame('petugas', $user->role);
         $this->actingAs($user);
 
@@ -275,7 +286,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_related_records_cannot_be_deleted_and_invalid_phone_is_rejected(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->petugas()->create());
         $kategori = Kategori::create(['nama' => 'Sains']);
         $buku = Buku::create([
             'kategori_id' => $kategori->id,
@@ -343,7 +354,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_peminjaman_rejects_inactive_members_empty_stock_and_a_fourth_active_loan(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->petugas()->create());
         $kategori = Kategori::create(['nama' => 'Koleksi']);
         $anggota = Anggota::create([
             'nis' => '4001',
@@ -408,7 +419,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_successful_peminjaman_sets_dates_and_decreases_stock(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->petugas()->create());
         $kategori = Kategori::create(['nama' => 'Fiksi']);
         $anggota = Anggota::create([
             'nis' => '5001',
@@ -449,7 +460,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_return_calculates_late_fee_and_cannot_increment_stock_twice(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->petugas()->create());
         $kategori = Kategori::create(['nama' => 'Sejarah']);
         $anggota = Anggota::create([
             'nis' => '6001',
@@ -492,7 +503,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_duplicate_book_code_is_rejected_without_losing_other_form_input(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->petugas()->create());
         $kategori = Kategori::create(['nama' => 'Bahasa']);
         Buku::create([
             'kategori_id' => $kategori->id,
@@ -520,7 +531,7 @@ class PerpustakaanTest extends TestCase
     public function test_petugas_can_add_a_cover_when_editing_a_book_without_one(): void
     {
         Storage::fake('public');
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->petugas()->create());
         $kategori = Kategori::create(['nama' => 'Pengetahuan']);
         $buku = Buku::create([
             'kategori_id' => $kategori->id,

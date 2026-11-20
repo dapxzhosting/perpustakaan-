@@ -126,12 +126,12 @@ class PeminjamanController extends Controller
             }
 
             $buku = Buku::whereKey($pinjaman->buku_id)->lockForUpdate()->firstOrFail();
-            $hariTerlambat = max(0, (int) $pinjaman->tgl_jatuh_tempo->diffInDays(today(), false));
+            $hariTerlambat = $pinjaman->hariTerlambat(today());
 
             $pinjaman->update([
                 'tgl_kembali' => today(),
                 'status' => 'dikembalikan',
-                'denda' => $hariTerlambat * 1000,
+                'denda' => $hariTerlambat * Peminjaman::DENDA_PER_HARI,
             ]);
             $buku->increment('stok');
         });

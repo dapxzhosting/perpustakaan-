@@ -101,7 +101,7 @@
                                     <span class="badge text-bg-warning">Dipinjam</span>
                                 @endif
                             </td>
-                            <td>Rp{{ number_format($item->denda, 0, ',', '.') }}</td>
+                            <td>Rp{{ number_format($item->dendaSaatIni(), 0, ',', '.') }}</td>
                             <td class="text-end text-nowrap">
                                 @if ($item->status === 'dipinjam')
                                     <form action="{{ route('admin.peminjaman.kembalikan', $item) }}" method="POST" onsubmit="return confirm('Catat pengembalian buku ini?')">

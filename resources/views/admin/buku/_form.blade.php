@@ -38,7 +38,7 @@
             @error('tahun_terbit')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6">
-            <label for="stok" class="form-label">Stok</label>
+            <label for="stok" class="form-label">Stok tersedia</label>
             <input id="stok" name="stok" type="number" min="0" value="{{ old('stok', $buku->stok ?? 0) }}" class="form-control @error('stok') is-invalid @enderror" required>
             @error('stok')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>

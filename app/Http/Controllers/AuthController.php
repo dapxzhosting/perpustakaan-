@@ -6,7 +6,10 @@ use App\Models\Anggota;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -53,12 +56,25 @@ class AuthController extends Controller
         $bukuId = $credentials['buku_id'] ?? null;
         unset($credentials['buku_id']);
 
+        $throttleKey = Str::lower($credentials['email']).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $detik = RateLimiter::availableIn($throttleKey);
+
+            return back()
+                ->withErrors(['email' => "Terlalu banyak percobaan masuk. Coba lagi dalam {$detik} detik."])
+                ->onlyInput('email', 'buku_id');
+        }
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::hit($throttleKey, 60);
+
             return back()
                 ->withErrors(['email' => 'Email atau kata sandi salah.'])
                 ->onlyInput('email', 'buku_id');
         }
 
+        RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
 
         if (Auth::user()->role === 'petugas') {
@@ -95,7 +111,28 @@ class AuthController extends Controller
         $bukuId = $data['buku_id'] ?? null;
         unset($data['buku_id']);
 
-        $user = DB::transaction(function () use ($data) {
+        try {
+            $user = $this->buatAkunAnggota($data);
+        } catch (QueryException $e) {
+            // Dua pendaftaran bersamaan dengan NIS/email yang sama.
+            throw ValidationException::withMessages([
+                'nis' => 'NIS atau email sudah didaftarkan. Silakan coba lagi atau hubungi petugas.',
+            ]);
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        $redirect = $bukuId
+            ? redirect()->route('buku.show', $bukuId)
+            : redirect()->route('katalog');
+
+        return $redirect->with('sukses', 'Akun berhasil dibuat. Silakan pilih buku yang ingin dipinjam.');
+    }
+
+    private function buatAkunAnggota(array $data): \App\Models\User
+    {
+        return DB::transaction(function () use ($data) {
             $anggota = Anggota::where('nis', $data['nis'])->lockForUpdate()->first();
 
             if ($anggota) {
@@ -103,15 +140,15 @@ class AuthController extends Controller
                     && mb_strtolower(trim($anggota->kelas)) === mb_strtolower(trim($data['kelas']))
                     && $anggota->no_hp === $data['no_hp'];
 
-                if ($anggota->user_id) {
-                    throw ValidationException::withMessages([
-                        'nis' => 'NIS ini sudah terhubung dengan akun.',
-                    ]);
-                }
-
                 if (! $identitasSesuai) {
                     throw ValidationException::withMessages([
                         'nis' => 'Data anggota tidak cocok. Periksa kembali NIS, nama, kelas, dan nomor HP.',
+                    ]);
+                }
+
+                if ($anggota->user_id) {
+                    throw ValidationException::withMessages([
+                        'nis' => 'NIS ini sudah terhubung dengan akun.',
                     ]);
                 }
 
@@ -136,15 +173,6 @@ class AuthController extends Controller
 
             return $user;
         });
-
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        $redirect = $bukuId
-            ? redirect()->route('buku.show', $bukuId)
-            : redirect()->route('katalog');
-
-        return $redirect->with('sukses', 'Akun berhasil dibuat. Silakan pilih buku yang ingin dipinjam.');
     }
 
     public function logout(Request $request): RedirectResponse
