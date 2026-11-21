@@ -37,15 +37,6 @@ class Peminjaman extends Model
         return max(0, (int) $this->tgl_jatuh_tempo->diffInDays($sampai, false));
     }
 
-    public function dendaSaatIni(): int
-    {
-        if ($this->status === 'dikembalikan') {
-            return (int) $this->denda;
-        }
-
-        return $this->hariTerlambat(today()) * self::DENDA_PER_HARI;
-    }
-
     public function anggota(): BelongsTo
     {
         return $this->belongsTo(Anggota::class);

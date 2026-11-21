@@ -10,28 +10,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [KatalogController::class, 'index'])->name('katalog');
 Route::get('/buku/{buku}', [KatalogController::class, 'show'])->name('buku.show');
-Route::get('/kategori/{kategori}', [KatalogController::class, 'showKategori'])->name('kategori.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
-    Route::get('/daftar', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/daftar', [AuthController::class, 'register'])->name('register.store');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::middleware(['auth', 'can:member-account'])->prefix('akun')->name('akun.')->group(function () {
-    Route::get('/peminjaman', [PeminjamanController::class, 'mine'])->name('peminjaman');
-});
-
-Route::post('/buku/{buku}/pinjam', [PeminjamanController::class, 'pinjam'])
-    ->middleware(['auth', 'can:member-account'])
-    ->name('buku.pinjam');
-
-Route::middleware(['auth', 'can:manage-library'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');

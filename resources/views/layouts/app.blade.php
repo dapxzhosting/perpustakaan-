@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/book-logo.png') }}">
     <title>@yield('judul', 'Perpustakaan Sekolah') · {{ config('app.name') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}" rel="stylesheet">
     @stack('styles')
 </head>
 <body>
@@ -16,7 +16,7 @@
         @include('partials.flash')
         @yield('konten')
     </main>
-    @php $footerRingkas = auth()->check() && auth()->user()->role === 'petugas'; @endphp
+    @php $footerRingkas = auth()->check(); @endphp
     <footer class="site-footer {{ $footerRingkas ? 'site-footer-compact' : '' }}">
         <div class="container page-wrap">
             @unless ($footerRingkas)
@@ -34,23 +34,14 @@
                     <a href="{{ route('katalog') }}">Katalog buku</a>
                     <a href="{{ route('katalog') }}#tentang">Tentang perpustakaan</a>
                 </nav>
-                <nav class="footer-column" aria-label="Akses akun">
-                    <h2>Akses akun</h2>
-                    @auth
-                        @if (auth()->user()->role === 'anggota')
-                            <a href="{{ route('akun.peminjaman') }}">Peminjaman saya</a>
-                        @else
-                            <a href="{{ route('admin.peminjaman.index') }}">Panel petugas</a>
-                        @endif
-                    @else
-                        <a href="{{ route('register') }}">Daftar anggota</a>
-                        <a href="{{ route('login') }}">Masuk ke akun</a>
-                    @endauth
+                <nav class="footer-column" aria-label="Akses petugas">
+                    <h2>Akses petugas</h2>
+                    <a href="{{ route('login') }}">Login petugas</a>
                 </nav>
                 <div class="footer-service">
-                    <p class="footer-service-label">LAYANAN ANGGOTA</p>
-                    <h2>Mulai dari buku yang kamu suka.</h2>
-                    <p>Jelajahi katalog, lalu masuk dengan akun anggota untuk mengajukan peminjaman dan melihat riwayatnya.</p>
+                    <p class="footer-service-label">KATALOG PERPUSTAKAAN</p>
+                    <h2>Temukan buku yang kamu cari.</h2>
+                    <p>Cari berdasarkan judul, penulis, atau kode buku langsung dari katalog.</p>
                     <a href="{{ route('katalog') }}">Lihat katalog <span aria-hidden="true">↗</span></a>
                 </div>
             </div>

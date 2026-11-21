@@ -9,34 +9,23 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
             @auth
-                @if (auth()->user()->role === 'petugas')
-                    <ul class="navbar-nav ms-lg-5 me-auto nav-links">
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">Peminjaman</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}" href="{{ route('admin.kategori.index') }}">Kategori</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.buku.*') ? 'active' : '' }}" href="{{ route('admin.buku.index') }}">Buku</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}" href="{{ route('admin.anggota.index') }}">Anggota</a>
-                        </li>
-                    </ul>
-                @else
-                    <ul class="navbar-nav ms-lg-5 me-auto nav-links">
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('katalog') ? 'active' : '' }}" href="{{ route('katalog') }}">Katalog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('akun.peminjaman') ? 'active' : '' }}" href="{{ route('akun.peminjaman') }}">Peminjaman saya</a>
-                        </li>
-                    </ul>
-                @endif
+                <ul class="navbar-nav ms-lg-5 me-auto nav-links">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">Peminjaman</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}" href="{{ route('admin.kategori.index') }}">Kategori</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.buku.*') ? 'active' : '' }}" href="{{ route('admin.buku.index') }}">Buku</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}" href="{{ route('admin.anggota.index') }}">Anggota</a>
+                    </li>
+                </ul>
                 <div class="nav-account">
-                    <span class="account-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr(auth()->user()->role === 'anggota' ? (auth()->user()->anggota?->nama ?? auth()->user()->name) : auth()->user()->name, 0, 1)) }}</span>
-                    <span class="account-name">{{ auth()->user()->role === 'anggota' ? (auth()->user()->anggota?->nama ?? auth()->user()->name) : auth()->user()->name }}</span>
+                    <span class="account-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                    <span class="account-name">{{ auth()->user()->name }}</span>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn-logout" type="submit">Keluar</button>
@@ -45,9 +34,8 @@
             @else
                 <div class="guest-nav-menu">
                     <a class="guest-nav-link {{ request()->routeIs('katalog') ? 'active' : '' }}" href="{{ route('katalog') }}">Katalog</a>
-                    <div class="guest-nav-actions">
-                        <a class="guest-login-button" href="{{ route('login') }}">Login akun</a>
-                        <a class="nav-login" href="{{ route('register') }}">Daftar anggota <span aria-hidden="true">↗</span></a>
+                    <div class="guest-nav-actions guest-nav-single">
+                        <a class="guest-login-button" href="{{ route('login') }}">Login petugas</a>
                     </div>
                 </div>
             @endauth

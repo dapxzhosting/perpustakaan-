@@ -9,16 +9,12 @@
             <h1>Setiap halaman punya <span>cerita.</span></h1>
             <p class="hero-description">Tempat yang nyaman untuk menemukan pengetahuan, merawat rasa ingin tahu, dan tumbuh bersama lewat membaca.</p>
             <div class="hero-actions">
-                @guest
-                    <a class="button button-primary" href="{{ route('login') }}">Login akun <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                    <a class="button button-member" href="{{ route('register') }}">Daftar anggota <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <a class="button button-primary" href="{{ route('katalog') }}#katalog">Jelajahi katalog <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                @auth
+                    <a class="button button-member" href="{{ route('admin.peminjaman.index') }}">Buka panel petugas <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                 @else
-                    @if (auth()->user()->role === 'petugas')
-                        <a class="button button-primary" href="{{ route('admin.peminjaman.index') }}">Buka panel petugas <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                    @else
-                        <a class="button button-primary" href="{{ route('akun.peminjaman') }}">Peminjaman saya <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                    @endif
-                @endguest
+                    <a class="button button-member" href="{{ route('login') }}">Login petugas <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                @endauth
             </div>
             <div class="hero-note">
                 <span>Ruang kecil untuk gagasan besar.</span>
@@ -58,27 +54,6 @@
                 <a class="button button-quiet" href="{{ route('katalog') }}">Reset</a>
             @endif
         </form>
-
-        @if ($kategoriList->isNotEmpty())
-            <section class="category-shortcuts" aria-labelledby="category-shortcuts-title">
-                <div class="category-shortcuts-heading">
-                    <div>
-                        <p class="section-kicker">JELAJAHI KOLEKSI</p>
-                        <h3 id="category-shortcuts-title">Pilih kategori bacaan</h3>
-                    </div>
-                    <p>Temukan buku sesuai minatmu.</p>
-                </div>
-                <div class="category-shortcut-grid">
-                    @foreach ($kategoriList as $kategori)
-                        <a class="category-shortcut" href="{{ route('kategori.show', $kategori) }}">
-                            <span class="category-shortcut-count">{{ number_format($kategori->buku_count, 0, ',', '.') }} judul</span>
-                            <strong>{{ $kategori->nama }}</strong>
-                            <span class="category-shortcut-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                        </a>
-                    @endforeach
-                </div>
-            </section>
-        @endif
 
         @if ($buku->isNotEmpty())
             <div class="catalog-grid">

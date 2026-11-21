@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Anggota;
 use App\Models\Buku;
-use App\Models\Kategori;
 use App\Models\Peminjaman;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -43,10 +42,6 @@ class PeminjamanController extends Controller
             ->withQueryString();
 
         return view('admin.peminjaman.index', [
-            'jumlahBuku' => Buku::count(),
-            'stokTersedia' => Buku::sum('stok'),
-            'anggotaAktif' => Anggota::where('status', 'aktif')->count(),
-            'jumlahKategori' => Kategori::count(),
             'peminjaman' => $peminjaman,
             'keyword' => $keyword,
             'statusTerpilih' => $status,
@@ -59,37 +54,6 @@ class PeminjamanController extends Controller
             'anggota' => Anggota::where('status', 'aktif')->orderBy('nama')->get(),
             'buku' => Buku::with('kategori')->orderBy('judul')->get(),
         ]);
-    }
-
-    public function mine(Request $request): View
-    {
-        $anggota = $request->user()->anggota;
-
-        abort_unless($anggota, 403);
-
-        return view('akun.peminjaman', [
-            'peminjaman' => $anggota->peminjaman()
-                ->with('buku')
-                ->orderByDesc('tgl_pinjam')
-                ->orderByDesc('id')
-                ->paginate(10),
-        ]);
-    }
-
-    public function pinjam(Request $request, Buku $buku): RedirectResponse
-    {
-        $anggota = $request->user()->anggota;
-
-        abort_unless($anggota, 403);
-
-        DB::transaction(function () use ($anggota, $buku): void {
-            $anggotaTerkunci = Anggota::whereKey($anggota->id)->lockForUpdate()->firstOrFail();
-            $bukuTerkunci = Buku::whereKey($buku->id)->lockForUpdate()->firstOrFail();
-
-            $this->catatPeminjaman($anggotaTerkunci, $bukuTerkunci, 'peminjaman');
-        });
-
-        return redirect()->route('akun.peminjaman')->with('sukses', 'Peminjaman berhasil dicatat.');
     }
 
     public function store(Request $request): RedirectResponse
@@ -139,10 +103,10 @@ class PeminjamanController extends Controller
         return redirect()->route('admin.peminjaman.index')->with('sukses', 'Buku berhasil dikembalikan dan denda telah dihitung.');
     }
 
-    private function catatPeminjaman(Anggota $anggota, Buku $buku, string $errorField = ''): void
+    private function catatPeminjaman(Anggota $anggota, Buku $buku): void
     {
-        $anggotaField = $errorField ?: 'anggota_id';
-        $bukuField = $errorField ?: 'buku_id';
+        $anggotaField = 'anggota_id';
+        $bukuField = 'buku_id';
 
         if ($anggota->status !== 'aktif') {
             throw ValidationException::withMessages([

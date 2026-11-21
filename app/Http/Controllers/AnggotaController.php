@@ -43,10 +43,6 @@ class AnggotaController extends Controller
 
     public function destroy(Anggota $anggota): RedirectResponse
     {
-        if ($anggota->user_id) {
-            return back()->with('galat', 'Anggota tidak dapat dihapus karena sudah terhubung dengan akun.');
-        }
-
         if ($anggota->peminjaman()->exists()) {
             return back()->with('galat', 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman.');
         }

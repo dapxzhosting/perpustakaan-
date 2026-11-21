@@ -14,13 +14,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $petugas = new User([
+        User::create([
             'name' => 'Petugas Perpustakaan',
             'email' => 'petugas@sekolah.test',
             'password' => Hash::make('password'),
         ]);
-        $petugas->role = 'petugas';
-        $petugas->save();
 
         $kategori = collect(['Fiksi', 'Sains', 'Sejarah', 'Bahasa', 'Teknologi'])
             ->mapWithKeys(fn (string $nama) => [$nama => Kategori::create(['nama' => $nama])]);

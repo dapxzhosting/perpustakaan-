@@ -27,7 +27,7 @@ class KatalogController extends Controller
 
         return view('welcome', [
             'buku' => $buku,
-            'kategoriList' => Kategori::withCount('buku')->orderBy('nama')->get(),
+            'kategoriList' => Kategori::orderBy('nama')->get(),
             'kategoriTerpilih' => $kategoriTerpilih,
             'keyword' => $keyword,
         ]);
@@ -39,28 +39,7 @@ class KatalogController extends Controller
 
         return view('katalog.buku', [
             'buku' => $buku,
-            'bukuTerkait' => Buku::with('kategori')
-                ->where('kategori_id', $buku->kategori_id)
-                ->whereKeyNot($buku->id)
-                ->orderBy('judul')
-                ->limit(4)
-                ->get(),
         ]);
-    }
-
-    public function showKategori(Request $request, Kategori $kategori): View
-    {
-        $filters = $request->validate([
-            'q' => ['nullable', 'string', 'max:100'],
-        ]);
-        $keyword = trim($filters['q'] ?? '');
-        $kategori->loadCount('buku');
-        $buku = $this->applySearch(Buku::with('kategori')->where('kategori_id', $kategori->id), $keyword)
-            ->orderBy('judul')
-            ->paginate(8)
-            ->withQueryString();
-
-        return view('katalog.kategori', compact('kategori', 'buku', 'keyword'));
     }
 
     private function applySearch(Builder $query, string $keyword): Builder

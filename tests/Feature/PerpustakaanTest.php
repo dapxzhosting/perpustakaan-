@@ -43,7 +43,7 @@ class PerpustakaanTest extends TestCase
             ->assertDontSee('✳')
             ->assertDontSee('✦');
 
-        $user = User::factory()->petugas()->create([
+        $user = User::factory()->create([
             'email' => 'petugas@sekolah.test',
             'password' => 'password',
         ]);
@@ -66,7 +66,6 @@ class PerpustakaanTest extends TestCase
         $this->get(route('katalog'))
             ->assertOk()
             ->assertSee('images/book-logo.png')
-            ->assertSee('Pilih kategori bacaan')
             ->assertDontSee('✳')
             ->assertDontSee('✦')
             ->assertDontSee('Pertemuan 1')
@@ -99,110 +98,10 @@ class PerpustakaanTest extends TestCase
             ->assertSessionHas('_old_input.email', 'salah@sekolah.test');
     }
 
-    public function test_member_registration_requires_login_for_borrowing_and_tracks_own_loans(): void
-    {
-        $kategori = Kategori::create(['nama' => 'Cerita']);
-        $buku = Buku::create([
-            'kategori_id' => $kategori->id,
-            'kode_buku' => 'CER-001',
-            'judul' => 'Cerita Sekolah',
-            'penulis' => 'Penulis',
-            'tahun_terbit' => now()->year,
-            'stok' => 1,
-        ]);
-
-        $this->post(route('buku.pinjam', $buku))
-            ->assertRedirect(route('login'));
-        $this->get(route('buku.show', $buku))
-            ->assertOk()
-            ->assertSee('Masuk untuk meminjam')
-            ->assertSee(route('register', ['buku_id' => $buku->id]));
-        $this->get(route('register', ['buku_id' => $buku->id]))
-            ->assertOk()
-            ->assertSee('Buat akun perpustakaanmu.');
-
-        $this->post(route('register.store'), [
-            'nama' => 'Siswa Baru',
-            'nis' => '9001',
-            'kelas' => 'X IPA 1',
-            'no_hp' => '081234567890',
-            'email' => 'siswa.baru@sekolah.test',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'buku_id' => $buku->id,
-        ])->assertRedirect(route('buku.show', $buku));
-
-        $user = User::where('email', 'siswa.baru@sekolah.test')->firstOrFail();
-        $anggota = Anggota::where('nis', '9001')->firstOrFail();
-        $this->assertSame('anggota', $user->role);
-        $this->assertSame($user->id, $anggota->user_id);
-        $this->assertAuthenticatedAs($user);
-        $this->get(route('admin.peminjaman.index'))->assertForbidden();
-
-        $this->post(route('logout'))->assertRedirect(route('katalog'));
-        $this->post(route('login.store'), [
-            'email' => 'siswa.baru@sekolah.test',
-            'password' => 'password123',
-            'buku_id' => $buku->id,
-        ])->assertRedirect(route('buku.show', $buku));
-        $this->assertAuthenticatedAs($user);
-
-        $this->post(route('buku.pinjam', $buku))
-            ->assertRedirect(route('akun.peminjaman'));
-
-        $this->assertDatabaseHas('peminjaman', [
-            'anggota_id' => $anggota->id,
-            'buku_id' => $buku->id,
-            'status' => 'dipinjam',
-        ]);
-        $this->assertDatabaseHas('buku', ['id' => $buku->id, 'stok' => 0]);
-        $this->get(route('akun.peminjaman'))
-            ->assertOk()
-            ->assertSee('Cerita Sekolah');
-    }
-
-    public function test_registration_can_link_an_existing_active_member_with_matching_identity(): void
-    {
-        $anggota = Anggota::create([
-            'nis' => '9002',
-            'nama' => 'Siswa Terdaftar',
-            'kelas' => 'XI IPA 1',
-            'no_hp' => '081234567891',
-            'status' => 'aktif',
-        ]);
-
-        $this->from(route('register'))
-            ->post(route('register.store'), [
-                'nama' => 'Siswa Terdaftar',
-                'nis' => '9002',
-                'kelas' => 'XI IPA 1',
-                'no_hp' => '081234567899',
-                'email' => 'siswa.terdaftar@sekolah.test',
-                'password' => 'password123',
-                'password_confirmation' => 'password123',
-            ])
-            ->assertRedirect(route('register'))
-            ->assertSessionHasErrors('nis');
-
-        $this->post(route('register.store'), [
-            'nama' => 'Siswa Terdaftar',
-            'nis' => '9002',
-            'kelas' => 'XI IPA 1',
-            'no_hp' => '081234567891',
-            'email' => 'siswa.terdaftar@sekolah.test',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ])->assertRedirect(route('katalog'));
-
-        $this->assertDatabaseCount('anggota', 1);
-        $this->assertNotNull($anggota->fresh()->user_id);
-    }
-
     public function test_petugas_can_manage_kategori_buku_and_anggota(): void
     {
         Storage::fake('public');
-        $user = User::factory()->petugas()->create();
-        $this->assertSame('petugas', $user->role);
+        $user = User::factory()->create();
         $this->actingAs($user);
 
         $this->get(route('admin.kategori.index'))->assertOk();
@@ -290,7 +189,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_related_records_cannot_be_deleted_and_invalid_phone_is_rejected(): void
     {
-        $this->actingAs(User::factory()->petugas()->create());
+        $this->actingAs(User::factory()->create());
         $kategori = Kategori::create(['nama' => 'Sains']);
         $buku = Buku::create([
             'kategori_id' => $kategori->id,
@@ -358,7 +257,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_peminjaman_rejects_inactive_members_empty_stock_and_a_fourth_active_loan(): void
     {
-        $this->actingAs(User::factory()->petugas()->create());
+        $this->actingAs(User::factory()->create());
         $kategori = Kategori::create(['nama' => 'Koleksi']);
         $anggota = Anggota::create([
             'nis' => '4001',
@@ -423,7 +322,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_successful_peminjaman_sets_dates_and_decreases_stock(): void
     {
-        $this->actingAs(User::factory()->petugas()->create());
+        $this->actingAs(User::factory()->create());
         $kategori = Kategori::create(['nama' => 'Fiksi']);
         $anggota = Anggota::create([
             'nis' => '5001',
@@ -464,7 +363,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_return_calculates_late_fee_and_cannot_increment_stock_twice(): void
     {
-        $this->actingAs(User::factory()->petugas()->create());
+        $this->actingAs(User::factory()->create());
         $kategori = Kategori::create(['nama' => 'Sejarah']);
         $anggota = Anggota::create([
             'nis' => '6001',
@@ -507,7 +406,7 @@ class PerpustakaanTest extends TestCase
 
     public function test_duplicate_book_code_is_rejected_without_losing_other_form_input(): void
     {
-        $this->actingAs(User::factory()->petugas()->create());
+        $this->actingAs(User::factory()->create());
         $kategori = Kategori::create(['nama' => 'Bahasa']);
         Buku::create([
             'kategori_id' => $kategori->id,
@@ -535,7 +434,7 @@ class PerpustakaanTest extends TestCase
     public function test_petugas_can_add_a_cover_when_editing_a_book_without_one(): void
     {
         Storage::fake('public');
-        $this->actingAs(User::factory()->petugas()->create());
+        $this->actingAs(User::factory()->create());
         $kategori = Kategori::create(['nama' => 'Pengetahuan']);
         $buku = Buku::create([
             'kategori_id' => $kategori->id,

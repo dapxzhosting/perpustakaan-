@@ -712,3 +712,74 @@ a { color: inherit; }
     .guest-nav-actions .guest-login-button,
     .guest-nav-actions .nav-login { display: flex; align-items: center; justify-content: center; min-height: 46px; white-space: nowrap; }
 }
+
+/* ==========================================================
+   Perapian tulisan dan tombol (ukuran seragam di semua halaman)
+   ========================================================== */
+
+/* Footer selalu menempel di bawah walau isi halaman pendek */
+body { display: flex; flex-direction: column; }
+body > main.page-wrap { flex: 1 0 auto; width: 100%; }
+.site-footer { margin-top: 56px; }
+
+/* Judul halaman: satu ukuran untuk semua halaman */
+.dashboard-heading h1,
+.page-heading h1 { font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 760; line-height: 1.15; letter-spacing: -.045em; }
+.dashboard-heading > div > p:last-child,
+.page-heading p:not(.section-kicker) { margin: 6px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.5; }
+.panel-heading h2 { font-size: 1.3rem; font-weight: 740; letter-spacing: -.03em; }
+
+/* Isi tabel: ukuran, bobot, dan jarak seragam */
+.table { font-size: .9rem; }
+.table > :not(caption) > * > * { padding: 14px 12px; vertical-align: middle; }
+.table thead th { white-space: nowrap; }
+.table td strong,
+.table td .fw-semibold { font-weight: 700; color: var(--ink); }
+.table td small,
+.table td .small { font-size: .78rem; font-weight: 500; line-height: 1.4; }
+.table td .badge { padding: .4em .75em; font-size: .72rem; font-weight: 700; letter-spacing: .01em; }
+
+/* Tombol utama dan sekunder: tinggi, huruf, dan sudut seragam */
+.button { min-height: 44px; padding: 0 20px; gap: 10px; border-radius: 12px; font-size: .88rem; font-weight: 700; line-height: 1; white-space: nowrap; }
+.button-primary,
+.btn-primary { box-shadow: 0 6px 14px rgb(35 107 81 / 16%); }
+.button-primary:hover,
+.btn-primary:hover { box-shadow: 0 8px 18px rgb(35 107 81 / 22%); }
+.button-quiet { border-color: var(--line); background: #fff; }
+.button-quiet:hover { border-color: #d3dacf; }
+
+/* Tombol kecil di dalam tabel (Detail, Ubah, Hapus, Kembalikan) */
+.btn { font-family: inherit; line-height: 1; }
+.btn-sm { display: inline-flex; min-height: 34px; align-items: center; justify-content: center; padding: 0 14px; border-radius: 10px; font-size: .8rem; font-weight: 700; }
+.table td.text-end { white-space: nowrap; }
+.table td.text-end > .btn,
+.table td.text-end > form { margin-left: 6px; vertical-align: middle; }
+.table td.text-end > form { display: inline-block; margin-bottom: 0; }
+.table td.text-end > .btn:first-child,
+.table td.text-end > form:first-child { margin-left: 0; }
+
+/* Baris pencarian/filter: kolom isian dan tombol sama tinggi */
+.catalog-filters .form-control, .catalog-filters .form-select,
+.loan-filters .form-control, .loan-filters .form-select { height: 44px; font-size: .9rem; }
+
+/* Formulir */
+.form-label { margin-bottom: 7px; font-size: .85rem; font-weight: 700; color: var(--ink-soft); }
+.form-control, .form-select { font-size: .92rem; }
+
+/* Detail buku (admin) memakai tata letak yang sama dengan halaman publik */
+.admin-book-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+@media (max-width: 767.98px) {
+    .admin-book-actions .button { flex: 1 1 140px; }
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-heading .button { width: 100%; }
+    .table-stack tbody td.cell-actions > .btn,
+    .table-stack tbody td.cell-actions > form { height: 40px; }
+    .table-stack tbody td.cell-actions > form .btn { width: 100%; height: 100%; }
+}
+
+@media (max-width: 767.98px) {
+    .table td.text-end.cell-actions > .btn,
+    .table td.text-end.cell-actions > form { margin-left: 0; }
+}

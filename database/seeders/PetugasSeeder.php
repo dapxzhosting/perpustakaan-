@@ -20,12 +20,10 @@ class PetugasSeeder extends Seeder
             return;
         }
 
-        // role tidak ada di $fillable, jadi diisi manual
-        $user = User::firstOrNew(['email' => $email]);
-        $user->name = $nama;
-        $user->password = Hash::make($password);
-        $user->role = 'petugas';
-        $user->save();
+        User::updateOrCreate(
+            ['email' => $email],
+            ['name' => $nama, 'password' => Hash::make($password)]
+        );
 
         $this->command?->info("Akun petugas {$email} siap dipakai.");
     }

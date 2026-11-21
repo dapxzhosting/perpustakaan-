@@ -12,29 +12,6 @@
         <a class="button button-primary" href="{{ route('admin.peminjaman.create') }}"><span aria-hidden="true">＋</span> Catat peminjaman</a>
     </section>
 
-    <section class="stats-grid" aria-label="Statistik perpustakaan">
-        <article class="stat-card stat-books">
-            <div class="stat-top"><span class="stat-icon" aria-hidden="true">▤</span><span class="stat-label">Total judul buku</span></div>
-            <strong>{{ number_format($jumlahBuku, 0, ',', '.') }}</strong>
-            <span class="stat-foot">Judul dalam koleksi</span>
-        </article>
-        <article class="stat-card stat-stock">
-            <div class="stat-top"><span class="stat-icon" aria-hidden="true">↗</span><span class="stat-label">Stok tersedia</span></div>
-            <strong>{{ number_format($stokTersedia, 0, ',', '.') }}</strong>
-            <span class="stat-foot">Eksemplar siap dipinjam</span>
-        </article>
-        <article class="stat-card stat-members">
-            <div class="stat-top"><span class="stat-icon" aria-hidden="true">♙</span><span class="stat-label">Anggota aktif</span></div>
-            <strong>{{ number_format($anggotaAktif, 0, ',', '.') }}</strong>
-            <span class="stat-foot">Siswa berstatus aktif</span>
-        </article>
-        <article class="stat-card stat-categories">
-            <div class="stat-top"><span class="stat-icon" aria-hidden="true">▦</span><span class="stat-label">Kategori</span></div>
-            <strong>{{ number_format($jumlahKategori, 0, ',', '.') }}</strong>
-            <span class="stat-foot">Pengelompokan koleksi</span>
-        </article>
-    </section>
-
     <section class="panel-card loans-panel">
         <div class="panel-heading">
             <div>
@@ -105,7 +82,7 @@
                                     <span class="badge text-bg-warning">Dipinjam</span>
                                 @endif
                             </td>
-                            <td data-label="Denda">Rp{{ number_format($item->dendaSaatIni(), 0, ',', '.') }}</td>
+                            <td data-label="Denda">Rp{{ number_format($item->denda, 0, ',', '.') }}</td>
                             <td class="text-end text-nowrap cell-actions">
                                 @if ($item->status === 'dipinjam')
                                     <form action="{{ route('admin.peminjaman.kembalikan', $item) }}" method="POST" onsubmit="return confirm('Catat pengembalian buku ini?')">
