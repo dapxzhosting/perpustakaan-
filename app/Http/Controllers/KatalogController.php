@@ -55,7 +55,7 @@ class KatalogController extends Controller
         ]);
         $keyword = trim($filters['q'] ?? '');
         $kategori->loadCount('buku');
-        $buku = $this->applySearch($kategori->buku()->with('kategori'), $keyword)
+        $buku = $this->applySearch(Buku::with('kategori')->where('kategori_id', $kategori->id), $keyword)
             ->orderBy('judul')
             ->paginate(8)
             ->withQueryString();

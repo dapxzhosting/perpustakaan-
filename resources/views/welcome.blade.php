@@ -9,8 +9,16 @@
             <h1>Setiap halaman punya <span>cerita.</span></h1>
             <p class="hero-description">Tempat yang nyaman untuk menemukan pengetahuan, merawat rasa ingin tahu, dan tumbuh bersama lewat membaca.</p>
             <div class="hero-actions">
-                <a class="button button-primary" href="{{ route('login') }}">Login akun <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                <a class="button button-member" href="{{ route('register') }}">Daftar anggota <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                @guest
+                    <a class="button button-primary" href="{{ route('login') }}">Login akun <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    <a class="button button-member" href="{{ route('register') }}">Daftar anggota <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                @else
+                    @if (auth()->user()->role === 'petugas')
+                        <a class="button button-primary" href="{{ route('admin.peminjaman.index') }}">Buka panel petugas <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    @else
+                        <a class="button button-primary" href="{{ route('akun.peminjaman') }}">Peminjaman saya <svg class="icon-inline icon-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7.5 7H17v9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    @endif
+                @endguest
             </div>
             <div class="hero-note">
                 <span>Ruang kecil untuk gagasan besar.</span>
