@@ -32,9 +32,6 @@ class AuthController extends Controller
         ]);
 
         $email = Str::lower($credentials['email']);
-        // Kunci per email+IP, dan kunci per email saja sebagai cadangan:
-        // dengan trustProxies('*') header X-Forwarded-For bisa dipalsukan,
-        // sehingga batas berbasis IP saja bisa dihindari.
         $throttleKey = $email.'|'.$request->ip();
         $emailKey = 'login-email|'.$email;
 

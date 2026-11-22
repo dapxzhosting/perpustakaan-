@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
-/**
- * Memastikan aplikasi tidak melebihi rancangan jobsheet Tugas 1:
- * skema database dan daftar route hanya yang diminta.
- */
 class SesuaiJobsheetTest extends TestCase
 {
     use RefreshDatabase;

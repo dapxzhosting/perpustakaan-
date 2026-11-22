@@ -5,12 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Menyamakan skema dengan jobsheet (users hanya untuk petugas, anggota tanpa akun).
- * Pada database baru migration ini tidak melakukan apa-apa. Pada database yang
- * pernah memakai kolom role / user_id, akun non-petugas dihapus lebih dulu agar
- * tidak ada akun anggota yang tiba-tiba bisa membuka panel petugas.
- */
 return new class extends Migration
 {
     public function up(): void
@@ -34,6 +28,5 @@ return new class extends Migration
 
     public function down(): void
     {
-        // Tidak dapat dikembalikan: fitur akun anggota sudah dilepas.
     }
 };

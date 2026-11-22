@@ -74,7 +74,6 @@ class PerpustakaanTest extends TestCase
 
     public function test_public_assets_use_https_when_behind_a_trusted_proxy(): void
     {
-        // Framework mereset setelan proxy saat tes; set ulang sama seperti di bootstrap/app.php.
         TrustProxies::at('*');
 
         $this->withServerVariables([
