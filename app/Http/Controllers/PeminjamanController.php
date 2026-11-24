@@ -41,10 +41,30 @@ class PeminjamanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $statistik = [
+            'buku' => Buku::count(),
+            'anggota' => Anggota::where('status', 'aktif')->count(),
+            'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
+            'terlambat' => Peminjaman::where('status', 'dipinjam')
+                ->whereDate('tgl_jatuh_tempo', '<', today())
+                ->count(),
+        ];
+
+        $bulan = collect(range(5, 0))->map(fn (int $i) => now()->startOfMonth()->subMonths($i));
+        $grafik = [
+            'label' => $bulan->map(fn ($b) => $b->translatedFormat('M Y'))->all(),
+            'data' => $bulan->map(fn ($b) => Peminjaman::whereBetween('tgl_pinjam', [
+                $b->copy()->startOfMonth()->toDateString(),
+                $b->copy()->endOfMonth()->toDateString(),
+            ])->count())->all(),
+        ];
+
         return view('admin.peminjaman.index', [
             'peminjaman' => $peminjaman,
             'keyword' => $keyword,
             'statusTerpilih' => $status,
+            'statistik' => $statistik,
+            'grafik' => $grafik,
         ]);
     }
 

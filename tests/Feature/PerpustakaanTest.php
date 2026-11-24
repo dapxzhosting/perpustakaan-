@@ -82,7 +82,7 @@ class PerpustakaanTest extends TestCase
             'HTTP_X_FORWARDED_PORT' => '443',
         ])->get(route('katalog'))
             ->assertOk()
-            ->assertSee('https://perpustakaan.example.test/css/app.css', false);
+            ->assertSee('https://perpustakaan.example.test/images/book-logo.png', false);
     }
 
     public function test_login_errors_keep_email_and_report_invalid_credentials_in_indonesian(): void

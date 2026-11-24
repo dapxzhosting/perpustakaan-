@@ -3,56 +3,39 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f6f7f2">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('images/book-logo.png') }}">
     <title>@yield('judul', 'Perpustakaan Sekolah') · {{ config('app.name') }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}" rel="stylesheet">
+
+    {{-- Tema Bootswatch "Zephyr". Alternatif: lux, minty, sandstone, journal, cosmo --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/zephyr/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     @stack('styles')
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
     @include('partials.navbar')
-    <main class="container page-wrap page-enter">
+
+    <main class="container py-4 flex-grow-1">
         @include('partials.flash')
         @yield('konten')
     </main>
-    @php $footerRingkas = auth()->check(); @endphp
-    <footer class="site-footer {{ $footerRingkas ? 'site-footer-compact' : '' }}">
-        <div class="container page-wrap">
-            @unless ($footerRingkas)
-            <div class="footer-main">
-                <div class="footer-about">
-                    <a class="brand-lockup footer-brand" href="{{ route('katalog') }}">
-                        <img class="brand-mark" src="{{ asset('images/book-logo.png') }}" alt="">
-                        <span>Ruang Baca</span>
-                    </a>
-                    <p>Ruang untuk membaca, belajar, dan bertumbuh. Temukan koleksi yang menginspirasi dan nikmati pengalaman perpustakaan yang lebih mudah.</p>
-                    <span class="footer-about-label">PERPUSTAKAAN SEKOLAH</span>
-                </div>
-                <nav class="footer-column" aria-label="Jelajahi perpustakaan">
-                    <h2>Jelajahi</h2>
-                    <a href="{{ route('katalog') }}">Katalog buku</a>
-                    <a href="{{ route('katalog') }}#tentang">Tentang perpustakaan</a>
-                </nav>
-                <nav class="footer-column" aria-label="Akses petugas">
-                    <h2>Akses petugas</h2>
-                    <a href="{{ route('login') }}">Login petugas</a>
-                </nav>
-                <div class="footer-service">
-                    <p class="footer-service-label">KATALOG PERPUSTAKAAN</p>
-                    <h2>Temukan buku yang kamu cari.</h2>
-                    <p>Cari berdasarkan judul, penulis, atau kode buku langsung dari katalog.</p>
-                    <a href="{{ route('katalog') }}">Lihat katalog <span aria-hidden="true">↗</span></a>
-                </div>
-            </div>
-            @endunless
-            <div class="footer-bottom">
-                <span>© {{ now()->year }} Ruang Baca. Ruang untuk tumbuh bersama.</span>
-                <a href="{{ route('katalog') }}">Kembali ke katalog <span aria-hidden="true">↑</span></a>
-            </div>
+
+    <footer class="bg-body border-top py-3 mt-4">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2 small text-body-secondary">
+            <span><i class="bi bi-book-half me-1"></i>© {{ now()->year }} Ruang Baca · Perpustakaan Sekolah</span>
+            <a class="link-secondary text-decoration-none" href="{{ route('katalog') }}">
+                Kembali ke katalog <i class="bi bi-arrow-up-short"></i>
+            </a>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>AOS.init({ duration: 900, once: true, offset: 70 });</script>
+    @include('partials.scripts')
     @stack('scripts')
 </body>
 </html>

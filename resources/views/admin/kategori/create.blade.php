@@ -1,20 +1,22 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 @section('judul', 'Tambah Kategori')
 @section('konten')
-    <div class="page-heading">
-        <div><p class="section-kicker">DATA MASTER</p><h1>Tambah kategori</h1></div>
-        <a class="button button-quiet" href="{{ route('admin.kategori.index') }}"><span aria-hidden="true">←</span> Kembali</a>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div><span class="page-pretitle d-block">DATA MASTER</span><h1 class="page-title">Tambah kategori</h1></div>
+        <a class="btn btn-outline-secondary" href="{{ route('admin.kategori.index') }}"><i class="bi bi-arrow-left me-1"></i>Kembali</a>
     </div>
-    <div class="panel-card form-card">
-        <form action="{{ route('admin.kategori.store') }}" method="POST">
-            @csrf
-            <label for="nama" class="form-label">Nama kategori</label>
-            <input id="nama" name="nama" value="{{ old('nama') }}" class="form-control @error('nama') is-invalid @enderror" required maxlength="100">
-            @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            <div class="form-actions">
-        <button class="button button-primary" type="submit">Simpan kategori</button>
-        <a class="button button-quiet" href="{{ route('admin.kategori.index') }}">Batal</a>
-    </div>
-        </form>
+    <div class="card" style="max-width:640px">
+        <div class="card-body p-4">
+            <form action="{{ route('admin.kategori.store') }}" method="POST">
+                @csrf
+                <label for="nama" class="form-label">Nama kategori</label>
+                <input id="nama" name="nama" value="{{ old('nama') }}" class="form-control @error('nama') is-invalid @enderror" required maxlength="100" autofocus>
+                @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>Simpan kategori</button>
+                    <a class="btn btn-outline-secondary" href="{{ route('admin.kategori.index') }}">Batal</a>
+                </div>
+            </form>
+        </div>
     </div>
 @endsection

@@ -4,13 +4,13 @@
     <div class="row g-3">
         <div class="col-md-6">
             <label for="kategori_id" class="form-label">Kategori</label>
-            <select id="kategori_id" name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror" required>
+            <select id="kategori_id" name="kategori_id" class="form-select select2 @error('kategori_id') is-invalid @enderror" required>
                 <option value="">Pilih kategori</option>
                 @foreach ($kategori as $item)
                     <option value="{{ $item->id }}" @selected(old('kategori_id', $buku->kategori_id) == $item->id)>{{ $item->nama }}</option>
                 @endforeach
             </select>
-            @error('kategori_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            @error('kategori_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6">
             <label for="kode_buku" class="form-label">Kode buku</label>
@@ -46,21 +46,19 @@
             <label for="sampul" class="form-label">Sampul buku (opsional, JPG/PNG maks. 2 MB)</label>
             <input id="sampul" name="sampul" type="file" accept=".jpg,.jpeg,.png" class="form-control @error('sampul') is-invalid @enderror">
             @error('sampul')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            <p class="form-text">Pilih gambar untuk menambah atau mengganti sampul. Kosongkan jika ingin mempertahankan sampul saat ini.</p>
-            <div id="sampul-preview" class="cover-upload-preview" @if (!$buku->sampul) hidden @endif>
-                <img
-                    id="sampul-preview-image"
-                    data-current-src="{{ $buku->sampul ? asset('storage/'.$buku->sampul) : '' }}"
-                    src="{{ $buku->sampul ? asset('storage/'.$buku->sampul) : '' }}"
-                    alt="Pratinjau sampul {{ $buku->judul }}"
-                >
-                <span id="sampul-preview-label">{{ $buku->sampul ? 'Sampul saat ini' : '' }}</span>
+            <div class="form-text">Pilih gambar untuk menambah atau mengganti sampul. Kosongkan jika ingin mempertahankan sampul saat ini.</div>
+            <div id="sampul-preview" class="mt-3" @if (!$buku->sampul) hidden @endif>
+                <img id="sampul-preview-image" class="img-thumbnail" style="max-height:200px"
+                     data-current-src="{{ $buku->sampul ? asset('storage/'.$buku->sampul) : '' }}"
+                     src="{{ $buku->sampul ? asset('storage/'.$buku->sampul) : '' }}"
+                     alt="Pratinjau sampul {{ $buku->judul }}">
+                <div id="sampul-preview-label" class="small text-body-secondary mt-1">{{ $buku->sampul ? 'Sampul saat ini' : '' }}</div>
             </div>
         </div>
     </div>
-    <div class="form-actions">
-        <button class="button button-primary" type="submit">Simpan buku</button>
-        <a class="button button-quiet" href="{{ route('admin.buku.index') }}">Batal</a>
+    <div class="d-flex flex-wrap gap-2 mt-4">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>Simpan buku</button>
+        <a class="btn btn-outline-secondary" href="{{ route('admin.buku.index') }}">Batal</a>
     </div>
 </form>
 

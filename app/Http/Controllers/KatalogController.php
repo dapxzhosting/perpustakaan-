@@ -30,6 +30,7 @@ class KatalogController extends Controller
             'kategoriList' => Kategori::orderBy('nama')->get(),
             'kategoriTerpilih' => $kategoriTerpilih,
             'keyword' => $keyword,
+            'bukuTerbaru' => Buku::with('kategori')->latest('id')->take(8)->get(),
         ]);
     }
 

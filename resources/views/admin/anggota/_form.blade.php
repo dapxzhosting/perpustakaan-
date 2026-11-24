@@ -19,8 +19,11 @@
         </div>
         <div class="col-md-6">
             <label for="no_hp" class="form-label">Nomor HP</label>
-            <input id="no_hp" name="no_hp" type="tel" value="{{ old('no_hp', $anggota->no_hp) }}" placeholder="081234567890" class="form-control @error('no_hp') is-invalid @enderror" required>
-            @error('no_hp')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <div class="input-group has-validation">
+                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                <input id="no_hp" name="no_hp" type="tel" value="{{ old('no_hp', $anggota->no_hp) }}" placeholder="081234567890" class="form-control @error('no_hp') is-invalid @enderror" required>
+                @error('no_hp')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
         </div>
         <div class="col-md-6">
             <label for="status" class="form-label">Status</label>
@@ -31,8 +34,8 @@
             @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
     </div>
-    <div class="form-actions">
-        <button class="button button-primary" type="submit">Simpan anggota</button>
-        <a class="button button-quiet" href="{{ route('admin.anggota.index') }}">Batal</a>
+    <div class="d-flex flex-wrap gap-2 mt-4">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>Simpan anggota</button>
+        <a class="btn btn-outline-secondary" href="{{ route('admin.anggota.index') }}">Batal</a>
     </div>
 </form>

@@ -1,43 +1,29 @@
-<nav class="navbar navbar-expand-lg site-nav">
-    <div class="container page-wrap">
-        <a class="navbar-brand brand-lockup" href="{{ route('katalog') }}">
-            <img class="brand-mark" src="{{ asset('images/book-logo.png') }}" alt="">
-            <span>Ruang<span class="brand-light">Baca</span></span>
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm sticky-top" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="{{ route('katalog') }}">
+            <img src="{{ asset('images/book-logo.png') }}" alt="" width="30" height="30" class="rounded">
+            <span>Ruang<span class="fw-light">Baca</span></span>
         </a>
-        <button class="navbar-toggler nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Buka navigasi">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Buka navigasi">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('katalog', 'buku.show') ? 'active' : '' }}" href="{{ route('katalog') }}">
+                        <i class="bi bi-grid me-1"></i>Katalog
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('katalog') }}#tentang"><i class="bi bi-info-circle me-1"></i>Tentang</a>
+                </li>
+            </ul>
             @auth
-                <ul class="navbar-nav ms-lg-5 me-auto nav-links">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">Peminjaman</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}" href="{{ route('admin.kategori.index') }}">Kategori</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.buku.*') ? 'active' : '' }}" href="{{ route('admin.buku.index') }}">Buku</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}" href="{{ route('admin.anggota.index') }}">Anggota</a>
-                    </li>
-                </ul>
-                <div class="nav-account">
-                    <span class="account-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
-                    <span class="account-name">{{ auth()->user()->name }}</span>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button class="btn-logout" type="submit">Keluar</button>
-                    </form>
-                </div>
+                <a class="btn btn-sm btn-light" href="{{ route('admin.peminjaman.index') }}"><i class="bi bi-speedometer2 me-1"></i>Panel petugas</a>
             @else
-                <div class="guest-nav-menu">
-                    <a class="guest-nav-link {{ request()->routeIs('katalog') ? 'active' : '' }}" href="{{ route('katalog') }}">Katalog</a>
-                    <div class="guest-nav-actions guest-nav-single">
-                        <a class="guest-login-button" href="{{ route('login') }}">Login petugas</a>
-                    </div>
-                </div>
+                <a class="btn btn-sm btn-light" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Login petugas</a>
             @endauth
         </div>
     </div>
