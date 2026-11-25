@@ -6,7 +6,7 @@
         @endif
     </div>
 
-    <div>{{ $paginator->onEachSide(1)->links('vendor.pagination.crud') }}</div>
+    <div>{{ $paginator->onEachSide(1)->links('partials.pagination-crud') }}</div>
 
     <form class="cx-perpage" method="GET" action="{{ url()->current() }}">
         @foreach (request()->except(['per_page', 'page']) as $name => $value)
