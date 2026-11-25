@@ -31,6 +31,11 @@ class KatalogController extends Controller
             'kategoriTerpilih' => $kategoriTerpilih,
             'keyword' => $keyword,
             'bukuTerbaru' => Buku::with('kategori')->latest('id')->take(8)->get(),
+            'ringkasan' => [
+                'judul' => Buku::count(),
+                'tersedia' => (int) Buku::sum('stok'),
+                'kategori' => Kategori::count(),
+            ],
         ]);
     }
 

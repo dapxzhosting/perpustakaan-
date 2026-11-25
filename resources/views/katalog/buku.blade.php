@@ -3,47 +3,61 @@
 @section('judul', $buku->judul)
 
 @section('konten')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('katalog') }}">Katalog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Detail buku</li>
-        </ol>
+    <nav class="mb-6 flex items-center gap-2 text-sm text-slate-500" aria-label="breadcrumb">
+        <a class="inline-flex items-center gap-1.5 transition hover:text-brand-600" href="{{ route('katalog') }}"><i class="bi bi-house-door"></i>Katalog</a>
+        <i class="bi bi-chevron-right text-[10px]"></i>
+        <span class="font-medium text-slate-900" aria-current="page">Detail buku</span>
     </nav>
 
-    <div class="card border-0 shadow-sm" data-aos="fade-up">
-        <div class="row g-0">
-            <div class="col-md-4 col-lg-3">
-                @if ($buku->sampul)
-                    <img class="img-fluid w-100 object-fit-cover rounded-start" style="aspect-ratio:3/4" src="{{ asset('storage/'.$buku->sampul) }}" alt="Sampul {{ $buku->judul }}">
-                @else
-                    <div class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis display-1 fw-bold h-100 rounded-start" style="min-height:260px" aria-hidden="true">
-                        {{ mb_strtoupper(mb_substr($buku->judul, 0, 1)) }}
-                    </div>
-                @endif
-            </div>
-            <div class="col-md-8 col-lg-9">
-                <div class="card-body p-4">
-                    <span class="badge text-bg-primary">{{ $buku->kategori->nama }}</span>
-                    <p class="text-body-secondary small mt-2 mb-1"><i class="bi bi-upc me-1"></i>{{ $buku->kode_buku }}</p>
-                    <h1 class="h2">{{ $buku->judul }}</h1>
-                    <p class="text-body-secondary">Ditulis oleh <strong>{{ $buku->penulis }}</strong></p>
-
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item d-flex justify-content-between"><span class="text-body-secondary">Penerbit</span><span>{{ $buku->penerbit ?: '-' }}</span></li>
-                        <li class="list-group-item d-flex justify-content-between"><span class="text-body-secondary">Tahun terbit</span><span>{{ $buku->tahun_terbit }}</span></li>
-                        <li class="list-group-item d-flex justify-content-between"><span class="text-body-secondary">Kategori</span><span>{{ $buku->kategori->nama }}</span></li>
-                        <li class="list-group-item d-flex justify-content-between"><span class="text-body-secondary">Stok tersedia</span><span>{{ $buku->stok > 0 ? $buku->stok.' eksemplar' : 'Sedang dipinjam semua' }}</span></li>
-                    </ul>
-
-                    <span class="badge fs-6 {{ $buku->stok > 0 ? 'text-bg-success' : 'text-bg-secondary' }}">
-                        <i class="bi {{ $buku->stok > 0 ? 'bi-check-circle' : 'bi-x-circle' }} me-1"></i>
-                        {{ $buku->stok > 0 ? 'Tersedia untuk dipinjam' : 'Sedang dipinjam semua' }}
-                    </span>
-                    <div class="mt-4">
-                        <a class="btn btn-outline-secondary" href="{{ route('katalog') }}"><i class="bi bi-arrow-left me-1"></i>Kembali ke katalog</a>
-                    </div>
+    <article class="grid overflow-hidden rounded-3xl border border-slate-200 bg-white md:grid-cols-[300px_1fr]">
+        <div class="bg-slate-100">
+            @if ($buku->sampul)
+                <img class="h-full w-full object-cover md:min-h-[420px]" src="{{ asset('storage/'.$buku->sampul) }}" alt="Sampul {{ $buku->judul }}">
+            @else
+                <div class="flex aspect-[4/3] h-full w-full items-center justify-center bg-gradient-to-br from-brand-500 to-violet-500 text-8xl font-extrabold text-white/90 md:aspect-auto md:min-h-[420px]" aria-hidden="true">
+                    {{ mb_strtoupper(mb_substr($buku->judul, 0, 1)) }}
                 </div>
+            @endif
+        </div>
+
+        <div class="p-6 sm:p-10">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700"><i class="bi bi-tag"></i>{{ $buku->kategori->nama }}</span>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"><i class="bi bi-upc"></i>{{ $buku->kode_buku }}</span>
+            </div>
+
+            <h1 class="mt-4 text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl">{{ $buku->judul }}</h1>
+            <p class="mt-1 inline-flex items-center gap-2 text-slate-500"><i class="bi bi-person"></i>{{ $buku->penulis }}</p>
+
+            <dl class="mt-6 divide-y divide-slate-100 border-y border-slate-100">
+                <div class="flex items-center justify-between gap-4 py-3.5">
+                    <dt class="inline-flex items-center gap-3 text-sm text-slate-500"><i class="bi bi-building text-base text-brand-600"></i>Penerbit</dt>
+                    <dd class="text-right text-sm font-medium text-slate-900">{{ $buku->penerbit ?: '-' }}</dd>
+                </div>
+                <div class="flex items-center justify-between gap-4 py-3.5">
+                    <dt class="inline-flex items-center gap-3 text-sm text-slate-500"><i class="bi bi-calendar-event text-base text-brand-600"></i>Tahun terbit</dt>
+                    <dd class="text-right text-sm font-medium text-slate-900">{{ $buku->tahun_terbit }}</dd>
+                </div>
+                <div class="flex items-center justify-between gap-4 py-3.5">
+                    <dt class="inline-flex items-center gap-3 text-sm text-slate-500"><i class="bi bi-tags text-base text-brand-600"></i>Kategori</dt>
+                    <dd class="text-right text-sm font-medium text-slate-900">{{ $buku->kategori->nama }}</dd>
+                </div>
+                <div class="flex items-center justify-between gap-4 py-3.5">
+                    <dt class="inline-flex items-center gap-3 text-sm text-slate-500"><i class="bi bi-stack text-base text-brand-600"></i>Stok tersedia</dt>
+                    <dd class="text-right text-sm font-medium text-slate-900">{{ $buku->stok > 0 ? $buku->stok.' eksemplar' : 'Sedang dipinjam semua' }}</dd>
+                </div>
+            </dl>
+
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+                @if ($buku->stok > 0)
+                    <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700"><i class="bi bi-check-circle"></i>Tersedia untuk dipinjam</span>
+                @else
+                    <span class="inline-flex items-center gap-2 rounded-full bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700"><i class="bi bi-x-circle"></i>Sedang dipinjam semua</span>
+                @endif
+                <a class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-brand-300 hover:text-brand-600" href="{{ route('katalog') }}">
+                    <i class="bi bi-arrow-left"></i>Kembali ke katalog
+                </a>
             </div>
         </div>
-    </div>
+    </article>
 @endsection

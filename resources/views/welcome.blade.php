@@ -2,215 +2,193 @@
 
 @section('judul', 'Katalog')
 
-@push('styles')
-    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
-@endpush
-
 @section('konten')
-    {{-- HERO --}}
-    <section class="card border-0 shadow overflow-hidden mb-5">
-        <div class="row g-0 align-items-center">
-            <div class="col-lg-6 p-4 p-lg-5" data-aos="fade-right">
-                <span class="badge text-bg-primary-subtle text-primary-emphasis mb-3 animate__animated animate__fadeInDown"><i class="bi bi-book-half me-1"></i>PERPUSTAKAAN SEKOLAH</span>
-                <h1 class="display-5 fw-bold animate__animated animate__fadeInUp">Setiap halaman punya <span class="text-primary">cerita.</span></h1>
-                <p class="lead text-body-secondary animate__animated animate__fadeInUp animate__delay-1s">Tempat yang nyaman untuk menemukan pengetahuan, merawat rasa ingin tahu, dan tumbuh bersama lewat membaca.</p>
-                <div class="d-flex flex-wrap gap-2 mt-4 animate__animated animate__fadeInUp animate__delay-1s">
-                    <a class="btn btn-primary btn-lg animate__animated animate__pulse animate__delay-2s" href="{{ route('katalog') }}#katalog"><i class="bi bi-search me-1"></i>Jelajahi katalog</a>
-                    @auth
-                        <a class="btn btn-outline-primary btn-lg" href="{{ route('admin.peminjaman.index') }}"><i class="bi bi-speedometer2 me-1"></i>Panel petugas</a>
-                    @else
-                        <a class="btn btn-outline-primary btn-lg" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Login petugas</a>
-                    @endauth
-                </div>
+    <section class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
+        <div class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-100/70 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-violet-100/60 blur-3xl"></div>
+
+        <div class="relative grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+            <div>
+                <span class="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-700">
+                    <i class="bi bi-book-half"></i>Perpustakaan sekolah
+                </span>
+                <h1 class="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                    Temukan bacaan <span class="text-brand-600">berikutnya</span>.
+                </h1>
+                <p class="mt-3 max-w-xl text-base leading-relaxed text-slate-500">
+                    Cari judul, penulis, atau kode buku, lalu cek ketersediaannya sebelum datang ke perpustakaan.
+                </p>
+
+                <form class="mt-6 flex max-w-xl flex-col gap-2 sm:flex-row" action="{{ route('katalog') }}#katalog" method="GET">
+                    @if ($kategoriTerpilih)
+                        <input type="hidden" name="kategori" value="{{ $kategoriTerpilih }}">
+                    @endif
+                    <label class="sr-only" for="catalog-q">Cari buku</label>
+                    <div class="relative flex-1">
+                        <i class="bi bi-search pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input id="catalog-q" name="q" value="{{ $keyword }}" placeholder="Cari judul, penulis, atau kode buku"
+                               class="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15">
+                    </div>
+                    <button type="submit" class="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700">
+                        <i class="bi bi-search"></i>Cari
+                    </button>
+                </form>
             </div>
-            <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
-                <img class="img-fluid w-100 object-fit-cover" style="max-height:420px" src="{{ asset('images/library-illustration.jpg') }}" alt="Ilustrasi perpustakaan sekolah dengan siswa membaca">
+
+            <div class="overflow-hidden rounded-2xl border border-slate-200">
+                <img class="h-56 w-full object-cover sm:h-72 lg:h-80" src="{{ asset('images/library-illustration.jpg') }}" alt="Ilustrasi perpustakaan sekolah dengan siswa membaca">
             </div>
         </div>
     </section>
 
-    {{-- BUKU TERBARU (carousel Swiper; disembunyikan saat sedang mencari/memfilter) --}}
+    <div class="mt-4 grid gap-3 sm:grid-cols-3">
+        <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-xl text-brand-600"><i class="bi bi-journal-bookmark"></i></span>
+            <div>
+                <div class="text-2xl font-bold leading-none text-slate-900">{{ number_format($ringkasan['judul'], 0, ',', '.') }}</div>
+                <div class="mt-1 text-xs text-slate-500">Judul buku</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-600"><i class="bi bi-check2-circle"></i></span>
+            <div>
+                <div class="text-2xl font-bold leading-none text-slate-900">{{ number_format($ringkasan['tersedia'], 0, ',', '.') }}</div>
+                <div class="mt-1 text-xs text-slate-500">Eksemplar tersedia</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-xl text-amber-600"><i class="bi bi-tags"></i></span>
+            <div>
+                <div class="text-2xl font-bold leading-none text-slate-900">{{ number_format($ringkasan['kategori'], 0, ',', '.') }}</div>
+                <div class="mt-1 text-xs text-slate-500">Kategori</div>
+            </div>
+        </div>
+    </div>
+
     @if ($bukuTerbaru->isNotEmpty() && $keyword === '' && ! $kategoriTerpilih)
-        <section class="mb-5" data-aos="fade-up">
-            <div class="d-flex justify-content-between align-items-end mb-3">
+        <section class="mt-12">
+            <div class="mb-4 flex items-end justify-between gap-3">
                 <div>
-                    <span class="text-primary fw-semibold small">BARU DITAMBAHKAN</span>
-                    <h2 class="h3 mb-0">Buku terbaru</h2>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-brand-600">Baru ditambahkan</span>
+                    <h2 class="flex items-center gap-2 text-xl font-bold text-slate-900"><i class="bi bi-stars text-brand-600"></i>Buku terbaru</h2>
                 </div>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary btn-sm buku-prev" aria-label="Sebelumnya"><i class="bi bi-chevron-left"></i></button>
-                    <button type="button" class="btn btn-outline-primary btn-sm buku-next" aria-label="Berikutnya"><i class="bi bi-chevron-right"></i></button>
+                <div class="flex gap-2">
+                    <button type="button" data-rail-prev aria-label="Sebelumnya" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:border-brand-300 hover:text-brand-600"><i class="bi bi-chevron-left"></i></button>
+                    <button type="button" data-rail-next aria-label="Berikutnya" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:border-brand-300 hover:text-brand-600"><i class="bi bi-chevron-right"></i></button>
                 </div>
             </div>
-            <div class="swiper buku-swiper pb-5">
-                <div class="swiper-wrapper">
-                    @foreach ($bukuTerbaru as $item)
-                        <div class="swiper-slide h-auto">
-                            <a class="card h-100 border-0 shadow-sm text-decoration-none text-body" href="{{ route('buku.show', $item) }}">
-                                @if ($item->sampul)
-                                    <img class="card-img-top object-fit-cover" style="aspect-ratio:3/4" src="{{ asset('storage/'.$item->sampul) }}" alt="Sampul {{ $item->judul }}">
-                                @else
-                                    <div class="card-img-top d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis display-3 fw-bold" style="aspect-ratio:3/4" aria-hidden="true">{{ mb_strtoupper(mb_substr($item->judul, 0, 1)) }}</div>
-                                @endif
-                                <div class="card-body">
-                                    <span class="badge text-bg-light border mb-2">{{ $item->kategori->nama }}</span>
-                                    <h3 class="h6 card-title mb-1">{{ $item->judul }}</h3>
-                                    <p class="small text-body-secondary mb-0">{{ $item->penulis }}</p>
-                                </div>
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-                <div class="swiper-pagination"></div>
+            <div data-rail class="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3">
+                @foreach ($bukuTerbaru as $item)
+                    @include('partials.kartu-buku', ['item' => $item, 'kompak' => true])
+                @endforeach
             </div>
         </section>
     @endif
 
-    {{-- KATALOG --}}
-    <section id="katalog" class="mb-5">
-        <div class="mb-3" data-aos="fade-up">
-            <span class="text-primary fw-semibold small">KOLEKSI PILIHAN</span>
-            <h2 class="h3 mb-1">Jelajahi katalog buku</h2>
-            <p class="text-body-secondary mb-0">Cari judul, penulis, atau kode buku, lalu temukan bacaan yang kamu suka.</p>
+    <section id="katalog" class="mt-12 scroll-mt-24">
+        <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-brand-600">Koleksi</span>
+                <h2 class="flex items-center gap-2 text-xl font-bold text-slate-900"><i class="bi bi-grid-1x2 text-brand-600"></i>Katalog buku</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                @if ($buku->total() > 0)
+                    <span class="text-sm text-slate-500">{{ $buku->total() }} buku ditemukan</span>
+                @endif
+                @if ($keyword !== '' || $kategoriTerpilih)
+                    <a href="{{ route('katalog') }}#katalog" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:text-brand-600">
+                        <i class="bi bi-x-lg text-xs"></i>Reset filter
+                    </a>
+                @endif
+            </div>
         </div>
 
-        <form class="card card-body border-0 shadow-sm mb-4" action="{{ route('katalog') }}" method="GET" data-aos="fade-up" data-aos-delay="100">
-            <div class="row g-2">
-                <div class="col-md-6">
-                    <label class="visually-hidden" for="catalog-q">Cari buku</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input id="catalog-q" name="q" value="{{ $keyword }}" class="form-control" placeholder="Cari judul, penulis, atau kode buku">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <label class="visually-hidden" for="catalog-kategori">Pilih kategori</label>
-                    <select id="catalog-kategori" name="kategori" class="form-select">
-                        <option value="">Semua kategori</option>
-                        @foreach ($kategoriList as $kategori)
-                            <option value="{{ $kategori->id }}" @selected($kategoriTerpilih === $kategori->id)>{{ $kategori->nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button class="btn btn-primary flex-fill" type="submit">Cari buku</button>
-                    @if ($keyword !== '' || $kategoriTerpilih)
-                        <a class="btn btn-outline-secondary" href="{{ route('katalog') }}#katalog">Reset</a>
-                    @endif
-                </div>
-            </div>
-        </form>
+        <div class="no-scrollbar -mx-4 mb-6 flex gap-2 overflow-x-auto px-4 pb-1">
+            <a class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition {{ $kategoriTerpilih ? 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-600' : 'border-brand-600 bg-brand-600 text-white' }}" href="{{ route('katalog', array_filter(['q' => $keyword])) }}#katalog">
+                <i class="bi bi-collection"></i>Semua
+            </a>
+            @foreach ($kategoriList as $kategori)
+                <a class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition {{ $kategoriTerpilih === $kategori->id ? 'border-brand-600 bg-brand-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-600' }}" href="{{ route('katalog', array_filter(['q' => $keyword, 'kategori' => $kategori->id])) }}#katalog">
+                    <i class="bi bi-tag"></i>{{ $kategori->nama }}
+                </a>
+            @endforeach
+        </div>
 
         @if ($buku->isNotEmpty())
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 @foreach ($buku as $item)
-                    <div class="col" data-aos="zoom-in-up" data-aos-delay="{{ ($loop->index % 4) * 100 }}">
-                        <a class="card h-100 border-0 shadow-sm text-decoration-none text-body" href="{{ route('buku.show', $item) }}">
-                            @if ($item->sampul)
-                                <img class="card-img-top object-fit-cover" style="aspect-ratio:3/4" src="{{ asset('storage/'.$item->sampul) }}" alt="Sampul {{ $item->judul }}">
-                            @else
-                                <div class="card-img-top d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis display-3 fw-bold" style="aspect-ratio:3/4" aria-hidden="true">
-                                    {{ mb_strtoupper(mb_substr($item->judul, 0, 1)) }}
-                                </div>
-                            @endif
-                            <div class="card-body">
-                                <span class="badge text-bg-light border mb-2">{{ $item->kategori->nama }}</span>
-                                <h3 class="h6 card-title mb-1">{{ $item->judul }}</h3>
-                                <p class="small text-body-secondary mb-2">{{ $item->penulis }}</p>
-                                <span class="badge {{ $item->stok > 0 ? 'text-bg-success' : 'text-bg-secondary' }}">
-                                    {{ $item->stok > 0 ? 'Tersedia '.$item->stok : 'Sedang dipinjam semua' }}
-                                </span>
-                            </div>
-                        </a>
-                    </div>
+                    @include('partials.kartu-buku', ['item' => $item])
                 @endforeach
             </div>
-            <div class="mt-4 d-flex justify-content-center">{{ $buku->links() }}</div>
+            <div class="mt-8">{{ $buku->links('partials.pagination-publik') }}</div>
         @else
-            <div class="card border-0 shadow-sm text-center py-5">
-                <div class="card-body">
-                    <i class="bi bi-journal-x display-4 text-body-tertiary"></i>
-                    <h3 class="h5 mt-3">Belum ada data</h3>
-                    <p class="text-body-secondary mb-0">Buku yang cocok belum ditemukan. Coba kata kunci atau kategori lain.</p>
-                </div>
+            <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+                <span class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-400"><i class="bi bi-journal-x"></i></span>
+                <h3 class="mt-4 text-lg font-semibold text-slate-900">Belum ada data</h3>
+                <p class="mt-1 text-sm text-slate-500">Buku yang cocok belum ditemukan. Coba kata kunci atau kategori lain.</p>
             </div>
         @endif
     </section>
 
-    {{-- TENTANG --}}
-    <section id="tentang" class="mb-5">
-        <div class="text-center mb-4" data-aos="fade-up">
-            <span class="text-primary fw-semibold small">LEBIH DARI SEKADAR BUKU</span>
-            <h2 class="h3">Belajar terasa lebih dekat saat semuanya tertata.</h2>
-        </div>
-        <div class="row g-3">
-            <div class="col-md-4" data-aos="flip-up">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <div class="card-body">
-                        <i class="bi bi-journal-bookmark-fill display-5 text-primary"></i>
-                        <h3 class="h5 mt-3">Koleksi tertata</h3>
-                        <p class="text-body-secondary mb-0">Data buku dan kategori dikelola dalam satu ruang yang mudah digunakan.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="flip-up" data-aos-delay="150">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <div class="card-body">
-                        <i class="bi bi-people-fill display-5 text-success"></i>
-                        <h3 class="h5 mt-3">Komunitas pembaca</h3>
-                        <p class="text-body-secondary mb-0">Data anggota tersimpan rapi agar layanan perpustakaan lebih teratur.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="flip-up" data-aos-delay="300">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <div class="card-body">
-                        <i class="bi bi-shield-check display-5 text-warning"></i>
-                        <h3 class="h5 mt-3">Akses petugas</h3>
-                        <p class="text-body-secondary mb-0">Panel khusus membantu petugas mengelola informasi dengan aman.</p>
-                    </div>
-                </div>
-            </div>
+    <section class="relative mt-16 overflow-hidden rounded-3xl">
+        <img class="h-72 w-full object-cover sm:h-80" src="{{ asset('images/library-shelves.jpg') }}" alt="Rak buku di dalam perpustakaan" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/55 to-transparent"></div>
+        <div class="absolute inset-0 flex flex-col justify-center p-6 sm:p-12">
+            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-200"><i class="bi bi-stars"></i>Ruang untuk bertumbuh</span>
+            <h2 class="mt-2 max-w-md text-2xl font-extrabold leading-tight text-white sm:text-3xl">Temukan ruang untuk cerita baru.</h2>
+            <p class="mt-2 max-w-md text-sm leading-relaxed text-slate-200">Di antara deretan buku, selalu ada pengetahuan dan inspirasi yang menunggu untuk ditemukan.</p>
         </div>
     </section>
 
-    {{-- SHOWCASE --}}
-    <section class="card text-bg-dark border-0 shadow-sm overflow-hidden mb-5" aria-label="Suasana perpustakaan" data-aos="zoom-in">
-        <img src="{{ asset('images/library-shelves.jpg') }}" class="card-img object-fit-cover opacity-50" style="min-height:300px" alt="Rak buku di dalam perpustakaan">
-        <div class="card-img-overlay d-flex flex-column justify-content-center p-4 p-lg-5">
-            <span class="small fw-semibold opacity-75">RUANG UNTUK BERTUMBUH</span>
-            <h2 class="h2" style="max-width:480px">Temukan ruang untuk cerita baru.</h2>
-            <p class="mb-3" style="max-width:480px">Di antara deretan buku, selalu ada pengetahuan dan inspirasi yang menunggu untuk ditemukan.</p>
-            <span class="badge text-bg-light align-self-start">Nyaman untuk belajar</span>
+    <section id="tentang" class="mt-12 scroll-mt-24">
+        <div class="mb-5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-brand-600">Tentang</span>
+            <h2 class="flex items-center gap-2 text-xl font-bold text-slate-900"><i class="bi bi-info-circle text-brand-600"></i>Lebih dari sekadar buku</h2>
+        </div>
+        <div class="grid gap-4 md:grid-cols-3">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-lg hover:shadow-brand-600/5">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-xl text-brand-600"><i class="bi bi-journal-bookmark"></i></span>
+                <h3 class="mt-4 font-semibold text-slate-900">Koleksi tertata</h3>
+                <p class="mt-1 text-sm leading-relaxed text-slate-500">Data buku dan kategori dikelola dalam satu ruang yang mudah digunakan.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-lg hover:shadow-brand-600/5">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-600"><i class="bi bi-people"></i></span>
+                <h3 class="mt-4 font-semibold text-slate-900">Komunitas pembaca</h3>
+                <p class="mt-1 text-sm leading-relaxed text-slate-500">Data anggota tersimpan rapi agar layanan perpustakaan lebih teratur.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-lg hover:shadow-brand-600/5">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-xl text-amber-600"><i class="bi bi-shield-check"></i></span>
+                <h3 class="mt-4 font-semibold text-slate-900">Akses petugas</h3>
+                <p class="mt-1 text-sm leading-relaxed text-slate-500">Panel khusus membantu petugas mengelola informasi dengan aman.</p>
+            </div>
         </div>
     </section>
-
-    {{-- CTA --}}
-    <section class="card border-0 bg-primary text-white shadow-sm" data-aos="fade-up">
-        <div class="card-body p-4 p-lg-5 d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <section class="mt-12 overflow-hidden rounded-3xl bg-brand-600 text-white">
+        <div class="flex flex-wrap items-center justify-between gap-6 p-6 sm:p-10">
             <div>
-                <span class="small opacity-75">UNTUK PETUGAS PERPUSTAKAAN</span>
-                <h2 class="h3 mb-0">Siap merapikan koleksi hari ini?</h2>
+                <span class="text-xs font-semibold uppercase tracking-wider text-brand-200">Untuk petugas perpustakaan</span>
+                <h2 class="mt-1 text-xl font-bold sm:text-2xl">Siap merapikan koleksi hari ini?</h2>
             </div>
-            <img class="rounded d-none d-md-block" style="height:96px" src="{{ asset('images/books-learning.jpg') }}" alt="Ilustrasi buku, pensil, dan lampu belajar">
-            <a class="btn btn-light btn-lg" href="{{ route('login') }}">Buka panel petugas <i class="bi bi-arrow-up-right"></i></a>
+            <img class="hidden h-24 rounded-xl object-cover md:block" src="{{ asset('images/books-learning.jpg') }}" alt="Ilustrasi buku, pensil, dan lampu belajar" loading="lazy">
+            @auth
+                <a class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50" href="{{ route('admin.peminjaman.index') }}">Buka panel petugas<i class="bi bi-arrow-up-right"></i></a>
+            @else
+                <a class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50" href="{{ route('login') }}">Buka panel petugas<i class="bi bi-arrow-up-right"></i></a>
+            @endauth
         </div>
     </section>
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        if (document.querySelector('.buku-swiper') && typeof Swiper !== 'undefined') {
-            new Swiper('.buku-swiper', {
-                loop: true,
-                spaceBetween: 16,
-                slidesPerView: 2,
-                autoplay: { delay: 2800, disableOnInteraction: false, pauseOnMouseEnter: true },
-                pagination: { el: '.buku-swiper .swiper-pagination', clickable: true },
-                navigation: { prevEl: '.buku-prev', nextEl: '.buku-next' },
-                breakpoints: { 576: { slidesPerView: 3 }, 992: { slidesPerView: 4 }, 1200: { slidesPerView: 5 } }
-            });
-        }
+        (function () {
+            var rail = document.querySelector('[data-rail]');
+            if (!rail) return;
+            var step = function () { return Math.max(rail.clientWidth * 0.8, 180); };
+            var prev = document.querySelector('[data-rail-prev]');
+            var next = document.querySelector('[data-rail-next]');
+            if (prev) prev.addEventListener('click', function () { rail.scrollBy({ left: -step(), behavior: 'smooth' }); });
+            if (next) next.addEventListener('click', function () { rail.scrollBy({ left: step(), behavior: 'smooth' }); });
+        })();
     </script>
 @endpush
