@@ -7,94 +7,87 @@
     <link rel="icon" type="image/png" href="{{ asset('images/book-logo.png') }}">
     <title>@yield('judul', 'Panel Petugas') · {{ config('app.name') }}</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet">
+    {{-- Tema panel: harus setelah tabler.min.css --}}
+    <link href="{{ asset('css/admin.css') }}?v={{ @filemtime(public_path('css/admin.css')) }}" rel="stylesheet">
     @stack('styles')
 </head>
 <body>
-<div class="page">
+<div class="cx-shell">
+
     {{-- SIDEBAR --}}
-    <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
-                    aria-controls="sidebar-menu" aria-expanded="false" aria-label="Buka menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <h1 class="navbar-brand navbar-brand-autodark">
-                <a href="{{ route('admin.peminjaman.index') }}" class="d-flex align-items-center gap-2 text-decoration-none">
-                    <img src="{{ asset('images/book-logo.png') }}" alt="" width="34" height="34" class="rounded">
-                    <span>Ruang<span class="fw-light">Baca</span></span>
-                </a>
-            </h1>
+    <aside class="cx-sidebar" id="cxSidebar" aria-label="Menu utama">
+        <a class="cx-brand" href="{{ route('admin.peminjaman.index') }}">
+            <img src="{{ asset('images/book-logo.png') }}" alt="" width="30" height="30">
+            <span>Ruang<span class="fw-light">Baca</span></span>
+        </a>
 
-            <div class="collapse navbar-collapse" id="sidebar-menu">
-                <ul class="navbar-nav pt-lg-3">
-                    <li class="nav-item {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('admin.peminjaman.index') }}">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-arrow-left-right"></i></span>
-                            <span class="nav-link-title">Peminjaman</span>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('admin.kategori.index') }}">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-tags"></i></span>
-                            <span class="nav-link-title">Kategori</span>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ request()->routeIs('admin.buku.*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('admin.buku.index') }}">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-journal-bookmark"></i></span>
-                            <span class="nav-link-title">Buku</span>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('admin.anggota.index') }}">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-people"></i></span>
-                            <span class="nav-link-title">Anggota</span>
-                        </a>
-                    </li>
+        <nav class="cx-menu">
+            <a class="cx-link {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">
+                <i class="bi bi-grid-1x2-fill"></i><span>Peminjaman</span>
+                @if (($menuHitung['terlambat'] ?? 0) > 0)
+                    <span class="cx-n is-alert" title="Peminjaman terlambat">{{ $menuHitung['terlambat'] }}</span>
+                @endif
+            </a>
+            <a class="cx-link" href="{{ route('katalog') }}">
+                <i class="bi bi-box-arrow-up-right"></i><span>Katalog publik</span>
+            </a>
 
-                    <li class="nav-item mt-lg-4">
-                        <a class="nav-link" href="{{ route('katalog') }}">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-grid"></i></span>
-                            <span class="nav-link-title">Katalog publik</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-person-circle"></i></span>
-                            <span class="nav-link-title">{{ auth()->user()->name }}</span>
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="nav-link w-100 border-0 bg-transparent text-start">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="bi bi-box-arrow-right"></i></span>
-                                <span class="nav-link-title">Keluar</span>
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
+            <div class="cx-menu-gap"></div>
+
+            <a class="cx-link is-plain {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}" href="{{ route('admin.kategori.index') }}">
+                <span>Kategori</span>
+            </a>
+            <a class="cx-link is-plain {{ request()->routeIs('admin.buku.*') ? 'active' : '' }}" href="{{ route('admin.buku.index') }}">
+                <span>Buku</span><span class="cx-n">{{ $menuHitung['buku'] ?? 0 }}</span>
+            </a>
+            <a class="cx-link is-plain {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}" href="{{ route('admin.anggota.index') }}">
+                <span>Anggota</span><span class="cx-n">{{ $menuHitung['anggota'] ?? 0 }}</span>
+            </a>
+        </nav>
+
+        <div class="cx-side-foot">
+            © {{ now()->year }} Ruang Baca<br>Panel petugas perpustakaan
         </div>
     </aside>
+    <div class="cx-scrim" id="cxScrim"></div>
 
     {{-- KONTEN --}}
-    <div class="page-wrapper">
-        <div class="page-body">
-            <div class="container-xl">
-                @include('partials.flash')
-                @yield('konten')
+    <div class="cx-main">
+        <header class="cx-topbar">
+            <div class="d-flex align-items-center gap-2">
+                <button class="cx-burger" id="cxBurger" type="button" aria-label="Buka menu" aria-controls="cxSidebar" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h2 class="cx-topbar-title">@yield('judul', 'Panel Petugas')</h2>
             </div>
-        </div>
-        <footer class="footer footer-transparent d-print-none">
-            <div class="container-xl text-secondary small">
-                © {{ now()->year }} Ruang Baca · Panel Petugas Perpustakaan Sekolah
+
+            <div class="cx-topbar-right">
+                <a class="cx-toplink d-none d-sm-inline" href="{{ route('katalog') }}">Buka situs</a>
+                <div class="dropdown">
+                    <button class="cx-user" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="cx-avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                        <span class="d-none d-sm-inline">{{ auth()->user()->name }}</span>
+                        <i class="bi bi-chevron-down" style="font-size:9px"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Keluar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </footer>
+        </header>
+
+        <main class="cx-content">
+            @include('partials.flash')
+            @yield('konten')
+        </main>
     </div>
 </div>
 
@@ -103,6 +96,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @include('partials.scripts')
+<script src="{{ asset('js/admin.js') }}?v={{ @filemtime(public_path('js/admin.js')) }}"></script>
 @stack('scripts')
 </body>
 </html>

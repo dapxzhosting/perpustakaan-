@@ -3,36 +3,58 @@
 @section('judul', 'Kategori')
 
 @section('konten')
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-        <div><span class="page-pretitle d-block">DATA MASTER</span><h1 class="page-title">Kategori buku</h1></div>
-        <a class="btn btn-primary" href="{{ route('admin.kategori.create') }}"><i class="bi bi-plus-lg me-1"></i>Tambah kategori</a>
-    </div>
+    <div class="cx-card">
+        <div class="cx-card-head">
+            <div>
+                <h1 class="cx-title">Kategori <span class="cx-count">{{ $kategori->total() }}</span></h1>
+                <p class="cx-sub">Kelompok untuk mengatur koleksi buku.</p>
+            </div>
 
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table table-hover">
-                <thead class="table-light">
-                    <tr><th>Nama kategori</th><th>Jumlah buku</th><th class="text-end">Aksi</th></tr>
+            <form class="cx-toolbar" method="GET" action="{{ route('admin.kategori.index') }}">
+                @if (request('per_page'))
+                    <input type="hidden" name="per_page" value="{{ (int) request('per_page') }}">
+                @endif
+                <div class="cx-search">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="search" name="q" value="{{ $keyword }}" placeholder="Cari kategori" aria-label="Cari kategori" style="padding-left:8px">
+                </div>
+                <a class="cx-btn-primary" href="{{ route('admin.kategori.create') }}"><i class="bi bi-plus-lg"></i>Tambah kategori</a>
+            </form>
+        </div>
+
+        <div class="cx-table-wrap">
+            <table class="cx-table">
+                <thead>
+                    <tr>
+                        <th class="cx-num">No</th>
+                        <th>Nama kategori</th>
+                        <th>Jumlah buku</th>
+                        <th class="text-end">Aksi</th>
+                    </tr>
                 </thead>
                 <tbody>
                     @forelse ($kategori as $item)
                         <tr>
-                            <td class="fw-semibold"><i class="bi bi-tag text-primary me-2"></i>{{ $item->nama }}</td>
-                            <td><span class="badge text-bg-light border">{{ $item->buku_count }} buku</span></td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.kategori.edit', $item) }}"><i class="bi bi-pencil"></i> Ubah</a>
-                                <form class="d-inline" action="{{ route('admin.kategori.destroy', $item) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Hapus</button>
-                                </form>
+                            <td class="cx-num">{{ $kategori->firstItem() + $loop->index }}</td>
+                            <td><span class="cx-strong">{{ $item->nama }}</span></td>
+                            <td><span class="cx-pill cx-pill--mute">{{ $item->buku_count }} buku</span></td>
+                            <td>
+                                <div class="cx-actions">
+                                    <a class="cx-act cx-act--edit" href="{{ route('admin.kategori.edit', $item) }}" title="Ubah" aria-label="Ubah {{ $item->nama }}"><i class="bi bi-pencil-square"></i></a>
+                                    <form action="{{ route('admin.kategori.destroy', $item) }}" method="POST">
+                                        @csrf @method('DELETE')
+                                        <button class="cx-act cx-act--del" type="submit" title="Hapus" aria-label="Hapus {{ $item->nama }}"><i class="bi bi-trash3"></i></button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="3" class="text-center text-body-secondary py-5"><i class="bi bi-inbox display-6 d-block mb-2"></i>Belum ada data</td></tr>
+                        <tr><td colspan="4" class="cx-empty"><i class="bi bi-inbox"></i>{{ $keyword !== '' ? 'Tidak ada kategori yang cocok dengan pencarian.' : 'Belum ada kategori. Klik "Tambah kategori" untuk mulai.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="card-footer bg-body border-0 d-flex justify-content-center pt-3">{{ $kategori->links() }}</div>
+
+        @include('partials.table-footer', ['paginator' => $kategori])
     </div>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Buku;
 use App\Models\Kategori;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,11 +13,25 @@ use Illuminate\View\View;
 
 class BukuController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('admin.buku.index', [
-            'buku' => Buku::with('kategori')->orderBy('judul')->paginate(10),
-        ]);
+        $keyword = mb_substr(trim((string) $request->query('q', '')), 0, 100);
+        $kolom = ['judul', 'penulis', 'kode_buku'];
+        $by = in_array($request->query('by'), $kolom, true) ? $request->query('by') : 'semua';
+
+        $buku = Buku::with('kategori')
+            ->when($keyword !== '', function (Builder $query) use ($keyword, $by, $kolom) {
+                $query->where(function (Builder $cari) use ($keyword, $by, $kolom) {
+                    foreach ($by === 'semua' ? $kolom : [$by] as $field) {
+                        $cari->orWhere($field, 'like', "%{$keyword}%");
+                    }
+                });
+            })
+            ->orderBy('judul')
+            ->paginate($this->perPage($request))
+            ->withQueryString();
+
+        return view('admin.buku.index', compact('buku', 'keyword', 'by'));
     }
 
     public function create(): View

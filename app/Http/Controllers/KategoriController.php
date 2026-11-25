@@ -10,11 +10,17 @@ use Illuminate\View\View;
 
 class KategoriController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('admin.kategori.index', [
-            'kategori' => Kategori::withCount('buku')->orderBy('nama')->paginate(10),
-        ]);
+        $keyword = mb_substr(trim((string) $request->query('q', '')), 0, 100);
+
+        $kategori = Kategori::withCount('buku')
+            ->when($keyword !== '', fn ($query) => $query->where('nama', 'like', "%{$keyword}%"))
+            ->orderBy('nama')
+            ->paginate($this->perPage($request))
+            ->withQueryString();
+
+        return view('admin.kategori.index', compact('kategori', 'keyword'));
     }
 
     public function create(): View

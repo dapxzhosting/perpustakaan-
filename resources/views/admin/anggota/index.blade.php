@@ -3,39 +3,77 @@
 @section('judul', 'Anggota')
 
 @section('konten')
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-        <div><span class="page-pretitle d-block">DATA MASTER</span><h1 class="page-title">Anggota perpustakaan</h1></div>
-        <a class="btn btn-primary" href="{{ route('admin.anggota.create') }}"><i class="bi bi-plus-lg me-1"></i>Tambah anggota</a>
-    </div>
+    <div class="cx-card">
+        <div class="cx-card-head">
+            <div>
+                <h1 class="cx-title">Anggota <span class="cx-count">{{ $anggota->total() }}</span></h1>
+                <p class="cx-sub">Siswa yang terdaftar sebagai anggota perpustakaan.</p>
+            </div>
 
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table table-hover">
-                <thead class="table-light">
-                    <tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>No. HP</th><th>Status</th><th class="text-end">Aksi</th></tr>
+            <form class="cx-toolbar" method="GET" action="{{ route('admin.anggota.index') }}">
+                @if (request('per_page'))
+                    <input type="hidden" name="per_page" value="{{ (int) request('per_page') }}">
+                @endif
+                <div class="cx-search">
+                    <select name="by" class="cx-sel" aria-label="Cari berdasarkan" data-autosubmit>
+                        <option value="semua" @selected($by === 'semua')>Semua</option>
+                        <option value="nama" @selected($by === 'nama')>Nama</option>
+                        <option value="nis" @selected($by === 'nis')>NIS</option>
+                        <option value="kelas" @selected($by === 'kelas')>Kelas</option>
+                    </select>
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="search" name="q" value="{{ $keyword }}" placeholder="Cari anggota" aria-label="Cari anggota">
+                </div>
+
+                @include('partials.columns-menu', ['columns' => [
+                    'nis' => 'NIS', 'nama' => 'Nama', 'kelas' => 'Kelas', 'hp' => 'No. HP', 'status' => 'Status',
+                ]])
+
+                <a class="cx-btn-primary" href="{{ route('admin.anggota.create') }}"><i class="bi bi-plus-lg"></i>Tambah anggota</a>
+            </form>
+        </div>
+
+        <div class="cx-table-wrap">
+            <table class="cx-table" data-cx-table="anggota">
+                <thead>
+                    <tr>
+                        <th class="cx-num">No</th>
+                        <th data-col="nis">NIS</th>
+                        <th data-col="nama">Nama</th>
+                        <th data-col="kelas">Kelas</th>
+                        <th data-col="hp">No. HP</th>
+                        <th data-col="status">Status</th>
+                        <th class="text-end">Aksi</th>
+                    </tr>
                 </thead>
                 <tbody>
                     @forelse ($anggota as $item)
                         <tr>
-                            <td>{{ $item->nis }}</td>
-                            <td class="fw-semibold">{{ $item->nama }}</td>
-                            <td>{{ $item->kelas }}</td>
-                            <td>{{ $item->no_hp }}</td>
-                            <td><span class="badge text-bg-{{ $item->status === 'aktif' ? 'success' : 'secondary' }}">{{ ucfirst($item->status) }}</span></td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.anggota.edit', $item) }}"><i class="bi bi-pencil"></i> Ubah</a>
-                                <form class="d-inline" action="{{ route('admin.anggota.destroy', $item) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Hapus</button>
-                                </form>
+                            <td class="cx-num">{{ $anggota->firstItem() + $loop->index }}</td>
+                            <td data-col="nis">{{ $item->nis }}</td>
+                            <td data-col="nama"><span class="cx-strong">{{ $item->nama }}</span></td>
+                            <td data-col="kelas">{{ $item->kelas }}</td>
+                            <td data-col="hp">{{ $item->no_hp ?: '-' }}</td>
+                            <td data-col="status">
+                                <span class="cx-pill {{ $item->status === 'aktif' ? 'cx-pill--ok' : 'cx-pill--mute' }}">{{ ucfirst($item->status) }}</span>
+                            </td>
+                            <td>
+                                <div class="cx-actions">
+                                    <a class="cx-act cx-act--edit" href="{{ route('admin.anggota.edit', $item) }}" title="Ubah" aria-label="Ubah {{ $item->nama }}"><i class="bi bi-pencil-square"></i></a>
+                                    <form action="{{ route('admin.anggota.destroy', $item) }}" method="POST">
+                                        @csrf @method('DELETE')
+                                        <button class="cx-act cx-act--del" type="submit" title="Hapus" aria-label="Hapus {{ $item->nama }}"><i class="bi bi-trash3"></i></button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-body-secondary py-5"><i class="bi bi-inbox display-6 d-block mb-2"></i>Belum ada data</td></tr>
+                        <tr><td colspan="7" class="cx-empty"><i class="bi bi-inbox"></i>{{ $keyword !== '' ? 'Tidak ada anggota yang cocok dengan pencarian.' : 'Belum ada anggota. Klik "Tambah anggota" untuk mulai.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="card-footer bg-body border-0 d-flex justify-content-center pt-3">{{ $anggota->links() }}</div>
+
+        @include('partials.table-footer', ['paginator' => $anggota])
     </div>
 @endsection

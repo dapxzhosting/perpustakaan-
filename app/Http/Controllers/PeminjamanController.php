@@ -38,7 +38,7 @@ class PeminjamanController extends Controller
             ))
             ->orderByDesc('tgl_pinjam')
             ->orderByDesc('id')
-            ->paginate(10)
+            ->paginate($this->perPage($request))
             ->withQueryString();
 
         $statistik = [

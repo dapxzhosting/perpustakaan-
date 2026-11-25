@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anggota;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -10,11 +11,25 @@ use Illuminate\View\View;
 
 class AnggotaController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('admin.anggota.index', [
-            'anggota' => Anggota::orderBy('nama')->paginate(10),
-        ]);
+        $keyword = mb_substr(trim((string) $request->query('q', '')), 0, 100);
+        $kolom = ['nama', 'nis', 'kelas'];
+        $by = in_array($request->query('by'), $kolom, true) ? $request->query('by') : 'semua';
+
+        $anggota = Anggota::query()
+            ->when($keyword !== '', function (Builder $query) use ($keyword, $by, $kolom) {
+                $query->where(function (Builder $cari) use ($keyword, $by, $kolom) {
+                    foreach ($by === 'semua' ? $kolom : [$by] as $field) {
+                        $cari->orWhere($field, 'like', "%{$keyword}%");
+                    }
+                });
+            })
+            ->orderBy('nama')
+            ->paginate($this->perPage($request))
+            ->withQueryString();
+
+        return view('admin.anggota.index', compact('anggota', 'keyword', 'by'));
     }
 
     public function create(): View
